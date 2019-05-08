@@ -3,7 +3,6 @@ import "../style.css";
 import Footer from "../components/footer";
 import Logoimage from "../components/image";
 import Title from "../components/indexTitle";
-import MainDiv from "../components/mainDiv";
 import MigrationBox from "../components/MigrationBox";
 import ProgressText from "../components/ProgressText";
 
