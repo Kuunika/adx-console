@@ -1,6 +1,12 @@
 import styled from "styled-components";
-import MainDiv from "./mainDiv";
-import OrangeLine from "./OrangeLine";
+import Link from "next/link";
+
+const OrangeLine = styled.div`
+  background-color: #f5a523;
+  height: 5%;
+  width: 100%;
+  margin-top: 60px;
+`;
 
 const FieldButtonDiv = styled.div`
   display: flex;
@@ -18,7 +24,7 @@ const SearchFiled = styled.input`
   width: 30%;
 `;
 
-const MigrationButton = styled.button`
+const MigrationButton = styled.a`
   background-image: linear-gradient(#fad55f, #f86e1f);
   border: none;
   color: white;
@@ -35,13 +41,15 @@ const MigrationButton = styled.button`
 `;
 
 const SearchBox = () => (
-  <MainDiv>
+  <>
     <FieldButtonDiv>
       <SearchFiled placeholder="Enter Migration ID (Sent as part of migration response)" />
-      <MigrationButton>Track Migration</MigrationButton>
+      <Link href="/migration">
+        <MigrationButton>Track Migration</MigrationButton>
+      </Link>
     </FieldButtonDiv>
     <OrangeLine />
-  </MainDiv>
+  </>
 );
 
 export default SearchBox;

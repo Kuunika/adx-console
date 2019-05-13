@@ -1,24 +1,20 @@
 {
-  "name": "ADX",
+  "name": "with-styled-components",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
   "scripts": {
     "dev": "next",
     "build": "next build",
     "start": "next start"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "@material-ui/core": "^3.9.3",
-    "@material-ui/icons": "^3.0.2",
+    "next": "8.1.0",
     "@zeit/next-css": "^1.0.1",
-    "materialize-css": "^1.0.0-rc.2",
-    "next": "^8.1.0",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "styled-components": "^4.2.0"
-  }
+    "react": "16.8.6",
+    "react-dom": "16.8.6",
+    "styled-components": "^4.0.0"
+  },
+  "devDependencies": {
+    "babel-plugin-styled-components": "^1.8.0"
+  },
+  "license": "ISC"
 }

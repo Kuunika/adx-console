@@ -1,5 +1,4 @@
-import BackgroundColor from "../components/background";
-import "../style.css";
+import BackgroundColor from "../components/Background";
 import Footer from "../components/footer";
 import Logoimage from "../components/image";
 import Title from "../components/indexTitle";

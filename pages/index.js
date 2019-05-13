@@ -1,21 +1,26 @@
-import BackgroundColor from "../components/background";
+import Background from "../components/Background";
 import Logoimage from "../components/image";
 import Title from "../components/indexTitle";
 import SearchBox from "../components/SearchBox";
 import Footer from "../components/footer";
-import "../style.css";
-import MainDiv from "../components/mainDiv";
-import OrangeLine from "../components/OrangeLine";
+import styled from "styled-components";
+
+const MainDiv = styled.div`
+  background-color: #596287;
+  min-height: calc(50vh - 1rem);
+  padding: 0px;
+  margin: 0px;
+`;
 
 const Index = props => (
-  <BackgroundColor>
+  <Background>
     <Logoimage />
     <Title />
     <MainDiv>
       <SearchBox />
     </MainDiv>
     <Footer />
-  </BackgroundColor>
+  </Background>
 );
 
 export default Index;

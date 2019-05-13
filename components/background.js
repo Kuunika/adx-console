@@ -1,11 +1,9 @@
 import styled from "styled-components";
 
-const BlueBackground = styled.body`
+const BlueBackground = styled.div`
   background-color: #0a122d;
 `;
 
-const BackgroundColor = props => (
-  <BlueBackground>{props.children}</BlueBackground>
-);
+const Background = props => <BlueBackground>{props.children}</BlueBackground>;
 
-export default BackgroundColor;
+export default Background;
