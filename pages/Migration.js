@@ -1,17 +1,11 @@
-import BackgroundColor from "../components/Background";
-import Footer from "../components/footer";
-import Logoimage from "../components/image";
-import Title from "../components/indexTitle";
+import Layout from "../components/Layout";
 import MigrationBox from "../components/MigrationBox";
 import ProgressText from "../components/ProgressText";
 
 const Migration = props => (
-  <BackgroundColor>
-    <Logoimage />
-    <Title />
+  <Layout>
     <MigrationBox />
-    <Footer />
-  </BackgroundColor>
+  </Layout>
 );
 
 export default Migration;
