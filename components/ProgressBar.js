@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import ProgressText from "./ProgressText";
 
 const Container = styled.div`
   width: 100%;
@@ -57,16 +56,30 @@ const List = styled.li`
   }
 `;
 
+const ProgressText = styled.p`
+  color: #0a122d;
+  font-size: 16px;
+  text-align: center;
+  margin-top: 30px;
+  margin-bottom: 5px;
+  font-style: oblique;
+  font-family: "Arial", Arial, Sans-serif;
+  font-weight: bold;
+`;
+
 const Bar = () => (
-  <Container>
-    <ProgressBar>
-      <List className="active">Preparing Data</List>
-      <List>Validating Codes</List>
-      <List>Migrating Data</List>
-      <List>Rerunning Failures</List>
-      <List>Sending Email</List>
-    </ProgressBar>
-  </Container>
+  <>
+    <Container>
+      <ProgressBar>
+        <List className="active">Preparing Data</List>
+        <List>Validating Codes</List>
+        <List>Migrating Data</List>
+        <List>Rerunning Failures</List>
+        <List>Sending Email</List>
+      </ProgressBar>
+    </Container>
+    <ProgressText>Reciving data, saving payload to database...</ProgressText>
+  </>
 );
 
 export default Bar;

@@ -2,8 +2,8 @@ import styled from "styled-components";
 import Link from "next/link";
 
 const OrangeLine = styled.div`
-  background-color: #f5a523;
-  height: 5%;
+  background-color: #ffa200;
+  height: 18px;
   width: 100%;
   margin-top: 60px;
 `;
@@ -41,15 +41,13 @@ const MigrationButton = styled.a`
 `;
 
 const SearchBox = () => (
-  <>
-    <FieldButtonDiv>
-      <SearchFiled placeholder="Enter Migration ID (Sent as part of migration response)" />
-      <Link href="/migration">
-        <MigrationButton>Track Migration</MigrationButton>
-      </Link>
-    </FieldButtonDiv>
+  <FieldButtonDiv>
+    <SearchFiled placeholder="Enter Migration ID (Sent as part of migration response)" />
+    <Link href="/migration">
+      <MigrationButton>Track Migration</MigrationButton>
+    </Link>
     <OrangeLine />
-  </>
+  </FieldButtonDiv>
 );
 
 export default SearchBox;
