@@ -2,14 +2,6 @@ import styled from "styled-components";
 
 const JSONObject = { serviceNow: "preparingData" };
 
-const ListArray = [
-  { text: "Preparing Data" },
-  { text: "Validating Codes" },
-  { text: "Migrating Data" },
-  { text: "Rerunning Failures" },
-  { text: "Sending Email" }
-];
-
 const Container = styled.div`
   width: 100%;
   display: flex;
