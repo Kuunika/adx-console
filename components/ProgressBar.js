@@ -2,8 +2,6 @@ import styled from "styled-components";
 import Pusher from "pusher-js/";
 
 
-const JSONObject = { serviceNow: "preparingData" };
-
 const Container = styled.div`
   width: 100%;
   display: flex;
