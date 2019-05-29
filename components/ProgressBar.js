@@ -12,6 +12,7 @@ const ProgressBar = styled.ul`
   width: 100%;
 `;
 
+
 const ProgressText = styled.p`
   color: #0a122d;
   font-size: 16px;
