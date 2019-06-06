@@ -1,6 +1,7 @@
 import styled from "styled-components";
+import Pusher from "pusher-js/";
 
-const JSONObject = { serviceNow: "preparingData" };
+const JSONObject = { serviceNow: "migratingData" };
 
 const Container = styled.div`
   width: 100%;
@@ -12,18 +13,24 @@ const ProgressBar = styled.ul`
   width: 100%;
 `;
 
-let InProgress = () => {
-  if(JSONObject.serviceNow == "preparingData") {
-    return 1;
-  } else if (JSONObject.serviceNow == "validateCode") {
-    return 2;
-  } else if (JSONObject.serviceNow == "migratingData") {
-    return 3;
-  } else if (JSONObject.serviceNow == "returningFailers") {
-    return 4;
-  } else if (JSONObject.serviceNow == "sendingEmail") {
+let complete = props => {
+  if (props.service == "sendingEmail") {
     return 5;
-  } else if (JSONObject.serviceNow == "Done") {
+  }
+};
+
+let InProgress = props => {
+  if (props.service == "preparingData") {
+    return 1;
+  } else if (props.service == "validateCode") {
+    return 2;
+  } else if (props.service == "migratingData") {
+    return 3;
+  } else if (props.service == "returningFailers") {
+    return 4;
+  } else if (props.service == "sendingEmail") {
+    return complete;
+  } else if (props.service == "Done") {
     return 0;
   }
 };
@@ -72,144 +79,139 @@ const List = styled.li`
   &:nth-child(${InProgress}):before {
     background-image: linear-gradient(orange, orange);
   }
+  &:nth-child(${complete}):before {
+    background-image: linear-gradient(#b0e84e, #4a9a25);
+  }
   &.active + &:after {
     background-color: #609331;
   }
 `;
 
-const Stepper = () => {
-  if (JSONObject.serviceNow == "preparingData") {
+const Stepper = props => {
+  if (props.service == "preparingData") {
     return (
       <>
-        <List key="1" className="">
+        <List service={props.service} className="">
           Preparing Data
         </List>
-        <List key="2" className="">
+        <List service={props.service} className="">
           Validating Code
         </List>
-        <List key="3" className="">
+        <List service={props.service} className="">
           Migrating Data
         </List>
-        <List key="4" className="">
+        <List service={props.service} className="">
           Returning Failures
         </List>
-        <List key="4" className="">
+        <List service={props.service} className="">
           Sending Email
         </List>
-
+      </>
+    );
+  } else if (props.service == "validateCode") {
+    return (
+      <>
+        <List
+          service={props.service}
+          className="active"
+        >
+          Preparing Data
+        </List>
+        <List service={props.service} service={props.service} className="">
+          Validating Code
+        </List>
+        <List service={props.service} service={props.service} className="">
+          Migrating Data
+        </List>
+        <List service={props.service} service={props.service} className="">
+          Returning Failures
+        </List>
+        <List service={props.service} service={props.service} className="">
+          Sending Email
+        </List>
+      </>
+    );
+  } else if (props.service == "migratingData") {
+    return (
+      <>
+        <List service={props.service} className="active">
+          Preparing Data
+        </List>
+        <List service={props.service} className="active">
+          Validating Code
+        </List>
+        <List service={props.service} className="">
+          Migrating Data
+        </List>
+        <List service={props.service} className="">
+          Returning Failures
+        </List>
+        <List service={props.service} className="">
+          Sending Email
+        </List>
+      </>
+    );
+  } else if (props.service == "returningFailers") {
+    return (
+      <>
+        <List service={props.service} className="active">
+          Preparing Data
+        </List>
+        <List service={props.service} className="active">
+          Validating Code
+        </List>
+        <List service={props.service} className="active">
+          Migrating Data
+        </List>
+        <List service={props.service} className="">
+          Returning Failures
+        </List>
+        <List service={props.service} className="">
+          Sending Email
+        </List>
+      </>
+    );
+  } else if (props.service == "sendingEmail") {
+    return (
+      <>
+        <List service={props.service} className="active">
+          Preparing Data
+        </List>
+        <List service={props.service} className="active">
+          Validating Code
+        </List>
+        <List service={props.service} className="active">
+          Migrating Data
+        </List>
+        <List service={props.service} className="active">
+          Returning Failures
+        </List>
+        <List service={props.service} className="">
+          Sending Email
+        </List>
+      </>
+    );
+  } else if (props.service == "Done") {
+    return (
+      <>
+        <List service={props.service} className="active">
+          Preparing Data
+        </List>
+        <List service={props.service} className="active">
+          Validating Code
+        </List>
+        <List service={props.service} className="active">
+          Migrating Data
+        </List>
+        <List service={props.service} className="active">
+          Returning Failures
+        </List>
+        <List service={props.service} className="active">
+          Sending Email
+        </List>
       </>
     );
   }
-    else if (JSONObject.serviceNow == "validateCode") {
-      return (
-        <>
-        <List className="active">
-          Preparing Data
-        </List>
-        <List className="">
-          Validating Code
-        </List>
-        <List className="">
-          Migrating Data
-        </List>
-        <List className="">
-          Returning Failures
-        </List>
-        <List className="">
-          Sending Email
-        </List>
-
-      </>
-      );
-    }
-    else if (JSONObject.serviceNow == "migratingData") {
-      return (
-        <>
-        <List className="active">
-          Preparing Data
-        </List>
-        <List className="active">
-          Validating Code
-        </List>
-        <List className="">
-          Migrating Data
-        </List>
-        <List className="">
-          Returning Failures
-        </List>
-        <List className="">
-          Sending Email
-        </List>
-
-      </>
-      );
-    }
-    else if (JSONObject.serviceNow == "returningFailers") {
-      return (
-        <>
-        <List className="active">
-          Preparing Data
-        </List>
-        <List className="active">
-          Validating Code
-        </List>
-        <List className="active">
-          Migrating Data
-        </List>
-        <List className="">
-          Returning Failures
-        </List>
-        <List className="">
-          Sending Email
-        </List>
-
-      </>
-      );
-    }
-    else if (JSONObject.serviceNow == "sendingEmail") {
-      return (
-        <>
-        <List className="active">
-          Preparing Data
-        </List>
-        <List className="active">
-          Validating Code
-        </List>
-        <List className="active">
-          Migrating Data
-        </List>
-        <List className="active">
-          Returning Failures
-        </List>
-        <List className="">
-          Sending Email
-        </List>
-
-      </>
-      );
-    }
-    else if (JSONObject.serviceNow == "Done") {
-      return (
-        <>
-        <List className="active">
-          Preparing Data
-        </List>
-        <List className="active">
-          Validating Code
-        </List>
-        <List className="active">
-          Migrating Data
-        </List>
-        <List className="active">
-          Returning Failures
-        </List>
-        <List className="active">
-          Sending Email
-        </List>
-
-      </>
-      );
-    }
 };
 
 const ProgressText = styled.p`
@@ -223,15 +225,42 @@ const ProgressText = styled.p`
   font-weight: bold;
 `;
 
-const Bar = () => (
-  <>
-    <Container>
-      <ProgressBar>
-        <Stepper/>
-      </ProgressBar>
-    </Container>
-    <ProgressText>Reciving data, saving payload to database...</ProgressText>
-  </>
-);
+class Bar extends React.Component {
+  state = {
+    messages: {}
+  };
+
+  componentDidMount() {
+    const pusher = new Pusher("cfaf7a3be30a27f2a21f", {
+      cluster: "ap2",
+      encrypted: true
+    });
+    const channel = pusher.subscribe("my-channel");
+    channel.bind("my-event", data => {
+      this.setState({ messages: data });
+    });
+  }
+
+  render() {
+    return (
+      <>
+        <Container>
+          <ProgressBar>
+            <Stepper
+              service={
+                this.state.messages.service
+                  ? this.state.messages.service
+                  : "preparingData"
+              }
+            />
+          </ProgressBar>
+        </Container>
+        <ProgressText>
+          Reciving data, saving payload to database...
+        </ProgressText>
+      </>
+    );
+  }
+}
 
 export default Bar;

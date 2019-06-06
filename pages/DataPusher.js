@@ -20,7 +20,7 @@ class DataPusher extends React.Component {
     return (
       <div>
         <ul id="jobs">
-          {this.state.messages.map(message => <li>{JSON.stringify(message)}</li>)}
+          {this.state.messages.map(message => <li>{JSON.stringify(message.service)}</li>)}
         </ul>
       </div>
     );

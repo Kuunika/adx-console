@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import Link from "next/link";
+import Pusher from "pusher-js/";
 
 const OrangeLine = styled.div`
   background-color: #ffa200;
@@ -40,14 +41,62 @@ const MigrationButton = styled.a`
   margin-bottom: 60px;
 `;
 
-const SearchBox = () => (
-  <FieldButtonDiv>
-    <SearchFiled placeholder="Enter Migration ID (Sent as part of migration response)" />
-    <Link href="/migration">
-      <MigrationButton>Track Migration</MigrationButton>
-    </Link>
-    <OrangeLine />
-  </FieldButtonDiv>
-);
+function isEmpty(obj) {
+  for(var key in obj) {
+      if(obj.hasOwnProperty(key))
+          return false;
+  }
+  return true;
+}
 
+class SearchBox extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      search: ``,
+      messages: {}
+    };
+  }
+
+  updateSearch=(event) =>{
+    this.setState({ search: event.target.value });
+  }
+
+  componentDidMount() {
+    const pusher = new Pusher("cfaf7a3be30a27f2a21f", {
+      cluster: "ap2",
+      encrypted: true
+    });
+    const channel = pusher.subscribe("my-channel");
+    channel.bind(this.state.search, data => {
+      this.setState({ messages: data });
+    });
+  }
+
+  Post=()=> {
+    return (
+      <div>
+        <Link as={`/migration/${this.state.search}`} href={`/migration?UUID=${this.state.search}`}>
+          <MigrationButton >
+            Track Migration
+          </MigrationButton>
+        </Link>
+      </div>
+    );
+  }
+
+  render() {
+    return (
+      <FieldButtonDiv>
+        <SearchFiled
+          onChange={e=>this.updateSearch(e)}
+          value={this.state.search}
+          placeholder="Enter Migration ID (Sent as part of migration response)"
+        />
+        {this.Post()}
+        <OrangeLine />
+      </FieldButtonDiv>
+    );
+  }
+}
 export default SearchBox;

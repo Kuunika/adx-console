@@ -1,4 +1,7 @@
 import styled from "styled-components";
+import Pusher from "pusher-js/";
+import Timer from "react-compound-timer";
+import { withRouter } from "react-router-dom";
 
 const DetailsDiv = styled.div`
   display: flex;
@@ -40,24 +43,83 @@ const CenterText = styled.p`
   margin: 3px;
 `;
 
-const Details = () => (
-  <DetailsDiv>
-    <List>
-      <RightText>Migration # </RightText>
-      <RightText>OpenLMIS Data for </RightText>
-      <RightText>Chemonics </RightText>
-    </List>
-    <List2>
-      <CenterText>00:00:00</CenterText>
-      <LeftText>Elapsed</LeftText>
-    </List2>
-    <List3>
-      <LeftText>Migration Started </LeftText>
-      <LeftText>-- Data Elements Sent</LeftText>
-      <LeftText>-- Data Elements Migrated</LeftText>
-      <LeftText>-- Data Elements Failed</LeftText>
-    </List3>
-  </DetailsDiv>
-);
+const migratedElements = props => {
+  if (props.service == "preparingData" || props.service == "validateCode") {
+    return 0;
+  } else if (props.service == "sendingEmail") {
+    return props.totalElements;
+  } else if (props.service == "migratingData") {
+    return props.chunkSize * props.chunkNumber;
+  } else {
+    return 0;
+  }
+};
+
+const url = window.location.pathname;
+console.log(url);
+const splited = url.split("/");
+const UUID = splited[splited.length - 1];
+
+function isEmpty(obj) {
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key)) return false;
+  }
+  return true;
+}
+
+class Details extends React.Component {
+  state = {
+    messages: {}
+  };
+
+  componentDidMount() {
+    const pusher = new Pusher("cfaf7a3be30a27f2a21f", {
+      cluster: "ap2",
+      encrypted: true
+    });
+    const channel = pusher.subscribe("my-channel");
+    const url = window.location.pathname;
+    const splited = url.split("/");
+    const UUID = splited[splited.length - 1];
+    channel.bind(UUID, data => {
+      this.setState({ messages: data });
+    });
+    // if (isEmpty(this.state.messages)) {
+    //   this.props.router.push("/");
+    // }
+  }
+
+  render() {
+    return (
+      <DetailsDiv>
+        <List>
+          <RightText>Migration # {UUID}</RightText>
+          <RightText>{this.state.messages.DateFor} </RightText>
+          <RightText>{this.state.messages.Email} </RightText>
+        </List>
+        <List2>
+          <CenterText>
+            <Timer>
+              <Timer.Hours />:
+              <Timer.Minutes />:
+              <Timer.Seconds />
+            </Timer>
+          </CenterText>
+          <LeftText>Elapsed</LeftText>
+        </List2>
+        <List3>
+          <LeftText>Migration Started </LeftText>
+          <LeftText>
+            {this.state.messages.totalElements}-- Data Elements Sent
+          </LeftText>
+          <LeftText>
+            {migratedElements(this.state.messages)}-- Data Elements Migrated
+          </LeftText>
+          <LeftText>0 -- Data Elements Failed</LeftText>
+        </List3>
+      </DetailsDiv>
+    );
+  }
+}
 
 export default Details;
