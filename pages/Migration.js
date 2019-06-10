@@ -3,7 +3,7 @@ import MigrationBox from "../components/MigrationBox";
 
 const Migration = props => (
   <Layout>
-    <MigrationBox />
+    <MigrationBox messages={props.messages}/>
   </Layout>
 );
 

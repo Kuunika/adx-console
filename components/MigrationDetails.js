@@ -84,9 +84,6 @@ class Details extends React.Component {
     channel.bind(UUID, data => {
       this.setState({ messages: data });
     });
-    // if (isEmpty(this.state.messages)) {
-    //   this.props.router.push("/");
-    // }
   }
 
   render() {
@@ -94,7 +91,7 @@ class Details extends React.Component {
       <DetailsDiv>
         <List>
           <RightText>Migration # {UUID}</RightText>
-          <RightText>{this.state.messages.DateFor} </RightText>
+          <RightText>{this.props.messages.DateFor} </RightText>
           <RightText>{this.state.messages.Email} </RightText>
         </List>
         <List2>
