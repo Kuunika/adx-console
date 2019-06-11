@@ -26,7 +26,7 @@ let InProgress = props => {
     return 2;
   } else if (props.service == "migratingData") {
     return 3;
-  } else if (props.service == "returningFailers") {
+  } else if (props.service == "reruningFailers") {
     return 4;
   } else if (props.service == "sendingEmail") {
     return complete;
@@ -151,7 +151,7 @@ const Stepper = props => {
         </List>
       </>
     );
-  } else if (props.service == "returningFailers") {
+  } else if (props.service == "reruningFailers") {
     return (
       <>
         <List service={props.service} className="active">

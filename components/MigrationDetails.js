@@ -48,7 +48,7 @@ const migratedElements = props => {
     return 0;
   } else if (props.service == "sendingEmail") {
     return props.totalElements;
-  } else if (props.service == "migratingData") {
+  } else if (props.service == "migratingData" || props.service == "reruningFailers") {
     return props.chunkSize * props.chunkNumber;
   } else {
     return 0;
@@ -91,7 +91,7 @@ class Details extends React.Component {
       <DetailsDiv>
         <List>
           <RightText>Migration # {UUID}</RightText>
-          <RightText>{this.props.messages.DateFor} </RightText>
+          <RightText>{this.state.messages.DateFor} </RightText>
           <RightText>{this.state.messages.Email} </RightText>
         </List>
         <List2>

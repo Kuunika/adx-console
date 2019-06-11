@@ -34,7 +34,7 @@ const BlueLine = styled.div`
 `;
 
 const migrationPercentage = props => {
-  if (props.service == "migratingData") {
+  if (props.service == "migratingData" || props.service == "reruningFailers") {
     let chunk = props.totalElements / props.chunkSize;
     return (props.chunkNumber / chunk) * 100 + "%";
   } else if(props.service == "sendingEmail"){
