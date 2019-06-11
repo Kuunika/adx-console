@@ -2,6 +2,8 @@ import styled from "styled-components";
 import Pusher from "pusher-js/";
 import Timer from "react-compound-timer";
 import { withRouter } from "react-router-dom";
+import { connect } from "react-redux";
+import { FETCH_MIGRATION } from "../redux/actions/migration";
 
 const DetailsDiv = styled.div`
   display: flex;
@@ -60,19 +62,19 @@ console.log(url);
 const splited = url.split("/");
 const UUID = splited[splited.length - 1];
 
-function isEmpty(obj) {
-  for (var key in obj) {
-    if (obj.hasOwnProperty(key)) return false;
-  }
-  return true;
-}
+// function isEmpty(obj) {
+//   for (var key in obj) {
+//     if (obj.hasOwnProperty(key)) return false;
+//   }
+//   return true;
+// }
 
 class Details extends React.Component {
-  state = {
-    messages: {}
-  };
+  // state = {
+  //   messages: {}
+  // };
 
-  componentDidMount() {
+  componentDidlMount() {
     const pusher = new Pusher("cfaf7a3be30a27f2a21f", {
       cluster: "ap2",
       encrypted: true
@@ -82,7 +84,7 @@ class Details extends React.Component {
     const splited = url.split("/");
     const UUID = splited[splited.length - 1];
     channel.bind(UUID, data => {
-      this.setState({ messages: data });
+      this.props.getMigrationData(data);
     });
   }
 
@@ -91,7 +93,7 @@ class Details extends React.Component {
       <DetailsDiv>
         <List>
           <RightText>Migration # {UUID}</RightText>
-          <RightText>{this.props.messages.DateFor} </RightText>
+          <RightText>{this.props.data.DateFor} </RightText>
           <RightText>{this.state.messages.Email} </RightText>
         </List>
         <List2>
@@ -119,4 +121,16 @@ class Details extends React.Component {
   }
 }
 
-export default Details;
+Details.propTypes = {
+  FETCH_MIGRATION: PropTypes.func.isRequired,
+  data: PropTypes.array.isRequired,
+};
+
+const mapStateToProps = state => ({
+  messages: state.data.migration
+});
+
+export default connect(
+  mapStateToProps,
+  { FETCH_MIGRATION }
+)(Details);
