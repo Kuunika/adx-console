@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import Pusher from "pusher-js/";
+import { connect } from "react-redux";
 
-const JSONObject = { serviceNow: "migratingData" };
+const JSONObject = { serviceNow: "migration" };
 
 const Container = styled.div`
   width: 100%;
@@ -14,24 +15,22 @@ const ProgressBar = styled.ul`
 `;
 
 let complete = props => {
-  if (props.service == "sendingEmail") {
-    return 5;
+  if (props.service == "email") {
+    return 4;
   }
 };
 
 let InProgress = props => {
-  if (props.service == "preparingData") {
-    return 1;
-  } else if (props.service == "validateCode") {
+  if (props.service == "validation") {
     return 2;
-  } else if (props.service == "migratingData") {
+  } else if (props.service == "migration") {
     return 3;
-  } else if (props.service == "returningFailers") {
+  } else if (props.service == "failqueue") {
     return 4;
-  } else if (props.service == "sendingEmail") {
-    return complete;
-  } else if (props.service == "Done") {
+  } else if (props.service == "email") {
     return 0;
+  } else {
+    return 1;
   }
 };
 
@@ -88,10 +87,10 @@ const List = styled.li`
 `;
 
 const Stepper = props => {
-  if (props.service == "preparingData") {
+  if (props.service == "validation") {
     return (
       <>
-        <List service={props.service} className="">
+        <List service={props.service} className="active">
           Preparing Data
         </List>
         <List service={props.service} className="">
@@ -108,16 +107,13 @@ const Stepper = props => {
         </List>
       </>
     );
-  } else if (props.service == "validateCode") {
+  } else if (props.service == "migration") {
     return (
       <>
-        <List
-          service={props.service}
-          className="active"
-        >
+        <List service={props.service} className="active">
           Preparing Data
         </List>
-        <List service={props.service} service={props.service} className="">
+        <List service={props.service} className="active">
           Validating Code
         </List>
         <List service={props.service} service={props.service} className="">
@@ -131,27 +127,7 @@ const Stepper = props => {
         </List>
       </>
     );
-  } else if (props.service == "migratingData") {
-    return (
-      <>
-        <List service={props.service} className="active">
-          Preparing Data
-        </List>
-        <List service={props.service} className="active">
-          Validating Code
-        </List>
-        <List service={props.service} className="">
-          Migrating Data
-        </List>
-        <List service={props.service} className="">
-          Returning Failures
-        </List>
-        <List service={props.service} className="">
-          Sending Email
-        </List>
-      </>
-    );
-  } else if (props.service == "returningFailers") {
+  } else if (props.service == "failqueue") {
     return (
       <>
         <List service={props.service} className="active">
@@ -171,7 +147,7 @@ const Stepper = props => {
         </List>
       </>
     );
-  } else if (props.service == "sendingEmail") {
+  } else if (props.service == "email") {
     return (
       <>
         <List service={props.service} className="active">
@@ -184,29 +160,29 @@ const Stepper = props => {
           Migrating Data
         </List>
         <List service={props.service} className="active">
-          Returning Failures
+          Rerunning Failures
         </List>
-        <List service={props.service} className="">
+        <List service={props.service} className="active">
           Sending Email
         </List>
       </>
     );
-  } else if (props.service == "Done") {
+  } else {
     return (
       <>
-        <List service={props.service} className="active">
+        <List service={props.service} className="">
           Preparing Data
         </List>
-        <List service={props.service} className="active">
+        <List service={props.service} className="">
           Validating Code
         </List>
-        <List service={props.service} className="active">
+        <List service={props.service} className="">
           Migrating Data
         </List>
-        <List service={props.service} className="active">
+        <List service={props.service} className="">
           Returning Failures
         </List>
-        <List service={props.service} className="active">
+        <List service={props.service} className="">
           Sending Email
         </List>
       </>
@@ -226,20 +202,20 @@ const ProgressText = styled.p`
 `;
 
 class Bar extends React.Component {
-  state = {
-    messages: {}
-  };
+  // state = {
+  //   messages: {}
+  // };
 
-  componentDidMount() {
-    const pusher = new Pusher("cfaf7a3be30a27f2a21f", {
-      cluster: "ap2",
-      encrypted: true
-    });
-    const channel = pusher.subscribe("my-channel");
-    channel.bind("my-event", data => {
-      this.setState({ messages: data });
-    });
-  }
+  // componentDidMount() {
+  //   const pusher = new Pusher("cfaf7a3be30a27f2a21f", {
+  //     cluster: "ap2",
+  //     encrypted: true
+  //   });
+  //   const channel = pusher.subscribe("my-channel");
+  //   channel.bind("my-event", data => {
+  //     this.setState({ messages: data });
+  //   });
+  // }
 
   render() {
     return (
@@ -248,19 +224,21 @@ class Bar extends React.Component {
           <ProgressBar>
             <Stepper
               service={
-                this.state.messages.service
-                  ? this.state.messages.service
-                  : "preparingData"
+                this.props.messages.service
+                  ? this.props.messages.service
+                  : "validation"
               }
             />
           </ProgressBar>
         </Container>
-        <ProgressText>
-          Reciving data, saving payload to database...
-        </ProgressText>
+        <ProgressText>{this.props.messages.message}....</ProgressText>
       </>
     );
   }
 }
 
-export default Bar;
+const mapStateToProps = state => ({
+  messages: state.migration.migration
+});
+
+export default connect(mapStateToProps)(Bar);

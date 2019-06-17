@@ -2,6 +2,7 @@ import styled from "styled-components";
 import MigrationDetails from "./MigrationDetails";
 import ProgressBar from "./ProgressBar";
 import Pusher from "pusher-js/";
+import { connect } from "react-redux";
 
 const MigrationContainer = styled.div`
   background-color: #9498a2;
@@ -33,35 +34,41 @@ const BlueLine = styled.div`
   margin-top: 0px;
 `;
 
+let percent = 0;
+
 const migrationPercentage = props => {
-  if (props.service == "migratingData") {
+  if (props.service == "migration" && props.message == "migrating elements") {
     let chunk = props.totalElements / props.chunkSize;
-    return (props.chunkNumber / chunk) * 100 + "%";
-  } else if(props.service == "sendingEmail"){
+    return percent = (props.chunkNumber / chunk) * 100 + "%";
+  } else if(props.service == "email"){
     return 100 + "%";
+  } else if(props.message == "migration started"){
+    return 0+"%";
+  } else if (props.message == 'migration completed' || props.service == 'failqueue') {
+    return percent;
   } else {
-    return 0+"%"
+    return percent + '%';
   }
 };
 
 class MigrationBox extends React.Component {
-  state = {
-    messages: {}
-  };
+  // state = {
+  //   messages: {}
+  // };
 
-  componentDidMount() {
-    const pusher = new Pusher("cfaf7a3be30a27f2a21f", {
-      cluster: "ap2",
-      encrypted: true
-    });
-    const channel = pusher.subscribe("my-channel");
-    const url = window.location.pathname;
-    const splited = url.split("/");
-    const UUID = splited[splited.length - 1];
-    channel.bind(UUID, data => {
-      this.setState({ messages: data });
-    });
-  }
+  // componentDidMount() {
+  //   const pusher = new Pusher("cfaf7a3be30a27f2a21f", {
+  //     cluster: "ap2",
+  //     encrypted: true
+  //   });
+  //   const channel = pusher.subscribe("my-channel");
+  //   const url = window.location.pathname;
+  //   const splited = url.split("/");
+  //   const UUID = splited[splited.length - 1];
+  //   channel.bind(UUID, data => {
+  //     this.setState({ messages: data });
+  //   });
+  // }
 
   render() {
     return (
@@ -69,9 +76,9 @@ class MigrationBox extends React.Component {
       <MigrationDetails />
           <ProgressBar />
           <MigrationContainer>
-            <Bar width={migrationPercentage(this.state.messages)} />
+            <Bar width={migrationPercentage(this.props.messages)} />
             <BarText>
-              {migrationPercentage(this.state.messages)} Total Migration
+              {migrationPercentage(this.props.messages)} Total Migration
             </BarText>
           </MigrationContainer>
           <BlueLine />
@@ -80,4 +87,10 @@ class MigrationBox extends React.Component {
   }
 }
 
-export default MigrationBox;
+const mapStateToProps = state => ({
+  messages: state.migration.migration
+});
+
+export default connect(
+  mapStateToProps,
+)(MigrationBox);
