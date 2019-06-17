@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import Pusher from "pusher-js/";
-import Timer from "react-compound-timer";
 import { withRouter } from "react-router-dom";
+import { connect } from "react-redux";
+import { getMigrationData } from "../redux/actions/migration";
 
 const DetailsDiv = styled.div`
   display: flex;
@@ -43,80 +44,102 @@ const CenterText = styled.p`
   margin: 3px;
 `;
 
+// function isEmpty(obj) {
+//   for (var key in obj) {
+//     if (obj.hasOwnProperty(key)) return false;
+//   }
+//   return true;
+// }
+
+let chunk = 0;//2
+let migrated = 0;//6
+
 const migratedElements = props => {
-  if (props.service == "preparingData" || props.service == "validateCode") {
-    return 0;
-  } else if (props.service == "sendingEmail") {
-    return props.totalElements;
-  } else if (props.service == "migratingData" || props.service == "reruningFailers") {
-    return props.chunkSize * props.chunkNumber;
+  if (props.service == "validation") {
+    return migrated;
+  } else if (
+    props.service == "migration" &&
+    props.message == "migrating elements"
+  ) {
+    migrated = props.chunkSize * props.chunkNumber;
+    return migrated;
+  } else if (props.service == "email") {
+    return migrated;
   } else {
-    return 0;
+    return migrated;
   }
 };
 
-const url = window.location.pathname;
-console.log(url);
-const splited = url.split("/");
-const UUID = splited[splited.length - 1];
+let count = 0;
 
-function isEmpty(obj) {
-  for (var key in obj) {
-    if (obj.hasOwnProperty(key)) return false;
+const total = props => {
+  if (props.message == "migrating elements") {
+    count = props.totalElements;
+    return count;
+  } else {
+    return count;
   }
-  return true;
+};
+
+const failers = props => {
+  if (props.service == "failqueue"){
+    return count - migrated;
+  } else {
+    return 0;
+  }
 }
 
 class Details extends React.Component {
-  state = {
-    messages: {}
-  };
-
-  componentDidMount() {
-    const pusher = new Pusher("cfaf7a3be30a27f2a21f", {
-      cluster: "ap2",
-      encrypted: true
-    });
-    const channel = pusher.subscribe("my-channel");
-    const url = window.location.pathname;
-    const splited = url.split("/");
-    const UUID = splited[splited.length - 1];
-    channel.bind(UUID, data => {
-      this.setState({ messages: data });
-    });
-  }
+  //  componentDidlMount() {
+  //   const pusher = new Pusher("cfaf7a3be30a27f2a21f", {
+  //     cluster: "ap2",
+  //     encrypted: true
+  //   });
+  //   const channel = pusher.subscribe("my-channel");
+  //   const url = window.location.pathname;
+  //   const splited = url.split("/");
+  //   const UUID = splited[splited.length - 1];
+  //   channel.bind(UUID, data => {
+  //     this.props.getMigrationData(data);
+  //   });
+  // }
 
   render() {
     return (
       <DetailsDiv>
         <List>
-          <RightText>Migration # {UUID}</RightText>
-          <RightText>{this.state.messages.DateFor} </RightText>
-          <RightText>{this.state.messages.Email} </RightText>
+          <RightText>Migration #</RightText>
+          <RightText>OpenLmis Data for April 2019 </RightText>
+          <RightText>araruadam@yahoo.co.uk </RightText>
         </List>
         <List2>
-          <CenterText>
-            <Timer>
-              <Timer.Hours />:
-              <Timer.Minutes />:
-              <Timer.Seconds />
-            </Timer>
-          </CenterText>
+          <CenterText />
           <LeftText>Elapsed</LeftText>
         </List2>
         <List3>
-          <LeftText>Migration Started </LeftText>
+          <LeftText>Migration Started 5 October 2019 </LeftText>
           <LeftText>
-            {this.state.messages.totalElements}-- Data Elements Sent
+            {total(this.props.messages)}-- Data Elements Sent to be migrated
           </LeftText>
           <LeftText>
-            {migratedElements(this.state.messages)}-- Data Elements Migrated
+            {migratedElements(this.props.messages)}-- Data Elements Migrated
           </LeftText>
-          <LeftText>0 -- Data Elements Failed</LeftText>
+          <LeftText>{failers(this.props.messages)}-- Data Elements Failed</LeftText>
         </List3>
       </DetailsDiv>
     );
   }
 }
 
-export default Details;
+// Details.propTypes = {
+//   messages: PropTypes.array.isRequired
+// };
+
+const mapStateToProps = state => ({
+  messages: state.migration.migration
+});
+
+export default connect(
+  mapStateToProps,
+  { getMigrationData }
+)(Details);

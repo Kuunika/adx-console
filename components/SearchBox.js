@@ -1,6 +1,9 @@
 import styled from "styled-components";
 import Link from "next/link";
-import Pusher from "pusher-js/";
+import Router, { withRouter } from "next/router";
+import { connect } from "react-redux";
+import { getMigrationData } from "../redux/actions/migration";
+import Swal from "sweetalert2";
 
 const OrangeLine = styled.div`
   background-color: #ffa200;
@@ -42,9 +45,8 @@ const MigrationButton = styled.a`
 `;
 
 function isEmpty(obj) {
-  for(var key in obj) {
-      if(obj.hasOwnProperty(key))
-          return false;
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key)) return false;
   }
   return true;
 }
@@ -58,38 +60,44 @@ class SearchBox extends React.Component {
     };
   }
 
-  updateSearch=(event) =>{
-    this.setState({ search: event.target.value });
-  }
-
-  componentDidMount() {
+  subscribe = () => {
     const pusher = new Pusher("cfaf7a3be30a27f2a21f", {
       cluster: "ap2",
       encrypted: true
     });
-    const channel = pusher.subscribe("my-channel");
-    channel.bind(this.state.search, data => {
-      this.setState({ messages: data });
+    const UUID = this.state.search;
+    const channel = pusher.subscribe(UUID);
+    channel.bind('my-event', data => {
+      this.props.getMigrationData(data);
     });
-  }
+    // if (isEmpty(this.props.messages)) {
+    //   Swal.fire(
+    //     "Migration?",
+    //     "The migration you entered does not exist or perhaps the migration is completed therfore check your email!!!",
+    //     "question"
+    //   );
+    // } else {
+      Router.push({ pathname: "/migration", query: { UUID } });
+    //}
+  };
 
-  Post=()=> {
+  updateSearch = event => {
+    this.setState({ search: event.target.value });
+  };
+
+  Post = () => {
     return (
-      <div>
-        <Link as={`/migration/${this.state.search}`} href={`/migration?UUID=${this.state.search}`}>
-          <MigrationButton >
-            Track Migration
-          </MigrationButton>
-        </Link>
-      </div>
+      <MigrationButton onClick={() => this.subscribe()}>
+        Track Migration
+      </MigrationButton>
     );
-  }
+  };
 
   render() {
     return (
       <FieldButtonDiv>
         <SearchFiled
-          onChange={e=>this.updateSearch(e)}
+          onChange={e => this.updateSearch(e)}
           value={this.state.search}
           placeholder="Enter Migration ID (Sent as part of migration response)"
         />
@@ -99,4 +107,14 @@ class SearchBox extends React.Component {
     );
   }
 }
-export default SearchBox;
+const mapStateToProps = state => ({
+  messages: state.migration.migration,
+  error: state.migration.error
+});
+
+export default withRouter(
+  connect(
+    mapStateToProps,
+    { getMigrationData }
+  )(SearchBox)
+);
