@@ -61,7 +61,7 @@ class SearchBox extends React.Component {
   }
 
   subscribe = () => {
-    const pusher = new Pusher("cfaf7a3be30a27f2a21f", {
+    const pusher = new Pusher("ebd3c5c2a06e092dbcba", {
       cluster: "ap2",
       encrypted: true
     });

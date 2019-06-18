@@ -2,8 +2,6 @@ import styled from "styled-components";
 import Pusher from "pusher-js/";
 import { connect } from "react-redux";
 
-const JSONObject = { serviceNow: "migration" };
-
 const Container = styled.div`
   width: 100%;
   display: flex;
@@ -25,11 +23,7 @@ let InProgress = props => {
     return 2;
   } else if (props.service == "migration") {
     return 3;
-<<<<<<< HEAD
-  } else if (props.service == "reruningFailers") {
-=======
   } else if (props.service == "failqueue") {
->>>>>>> adding-redux
     return 4;
   } else if (props.service == "email") {
     return 0;
@@ -131,31 +125,7 @@ const Stepper = props => {
         </List>
       </>
     );
-<<<<<<< HEAD
-  } else if (props.service == "migratingData") {
-    return (
-      <>
-        <List service={props.service} className="active">
-          Preparing Data
-        </List>
-        <List service={props.service} className="active">
-          Validating Code
-        </List>
-        <List service={props.service} className="">
-          Migrating Data
-        </List>
-        <List service={props.service} className="">
-          Returning Failures
-        </List>
-        <List service={props.service} className="">
-          Sending Email
-        </List>
-      </>
-    );
-  } else if (props.service == "reruningFailers") {
-=======
   } else if (props.service == "failqueue") {
->>>>>>> adding-redux
     return (
       <>
         <List service={props.service} className="active">
