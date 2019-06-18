@@ -67,18 +67,13 @@ class SearchBox extends React.Component {
     });
     const UUID = this.state.search;
     const channel = pusher.subscribe(UUID);
-    channel.bind('my-event', data => {
-      this.props.getMigrationData(data);
+
+    channel.bind("pusher:subscription_succeeded", () => {
+      channel.trigger("my-event", data => {
+        this.props.getMigrationData(data);
+        Router.push({ pathname: "/migration", query: { UUID } });
+      });
     });
-    // if (isEmpty(this.props.messages)) {
-    //   Swal.fire(
-    //     "Migration?",
-    //     "The migration you entered does not exist or perhaps the migration is completed therfore check your email!!!",
-    //     "question"
-    //   );
-    // } else {
-      Router.push({ pathname: "/migration", query: { UUID } });
-    //}
   };
 
   updateSearch = event => {
