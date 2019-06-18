@@ -21,7 +21,9 @@ let complete = props => {
 };
 
 let InProgress = props => {
-  if (props.service == "validation") {
+  if (props.service == "mediator") {
+    return 1;
+  } else if (props.service == "validation") {
     return 2;
   } else if (props.service == "migration") {
     return 3;
@@ -30,7 +32,7 @@ let InProgress = props => {
   } else if (props.service == "email") {
     return 0;
   } else {
-    return 1;
+    return 0;
   }
 };
 
@@ -226,7 +228,7 @@ class Bar extends React.Component {
               service={
                 this.props.messages.service
                   ? this.props.messages.service
-                  : "validation"
+                  : "mediator"
               }
             />
           </ProgressBar>

@@ -68,12 +68,10 @@ class SearchBox extends React.Component {
     const UUID = this.state.search;
     const channel = pusher.subscribe(UUID);
 
-    channel.bind("pusher:subscription_succeeded", () => {
-      channel.trigger("my-event", data => {
+      channel.bind("my-event", data => {
         this.props.getMigrationData(data);
-        Router.push({ pathname: "/migration", query: { UUID } });
       });
-    });
+    Router.push({ pathname: "/migration", query: { UUID } });
   };
 
   updateSearch = event => {

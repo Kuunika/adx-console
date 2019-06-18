@@ -108,7 +108,7 @@ class Details extends React.Component {
     return (
       <DetailsDiv>
         <List>
-          <RightText>Migration #</RightText>
+          <RightText>Migration #my-channel</RightText>
           <RightText>OpenLmis Data for April 2019 </RightText>
           <RightText>araruadam@yahoo.co.uk </RightText>
         </List>
