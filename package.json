@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "cypress": "cypress open"
   },
   "dependencies": {
     "@material-ui/core": "^4.1.1",
@@ -25,7 +26,8 @@
     "sweetalert2": "^8.12.1"
   },
   "devDependencies": {
-    "babel-plugin-styled-components": "^1.8.0"
+    "babel-plugin-styled-components": "^1.8.0",
+    "cypress": "^3.3.1"
   },
   "license": "ISC"
 }

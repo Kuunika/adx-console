@@ -204,20 +204,6 @@ const ProgressText = styled.p`
 `;
 
 class Bar extends React.Component {
-  // state = {
-  //   messages: {}
-  // };
-
-  // componentDidMount() {
-  //   const pusher = new Pusher("cfaf7a3be30a27f2a21f", {
-  //     cluster: "ap2",
-  //     encrypted: true
-  //   });
-  //   const channel = pusher.subscribe("my-channel");
-  //   channel.bind("my-event", data => {
-  //     this.setState({ messages: data });
-  //   });
-  // }
 
   render() {
     return (

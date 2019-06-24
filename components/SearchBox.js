@@ -56,11 +56,12 @@ class SearchBox extends React.Component {
     super();
     this.state = {
       search: ``,
-      messages: {}
+      messages: {},
+      redirect: false
     };
   }
 
-  subscribe = async () => {
+  subscribe = () => {
     const pusher = new Pusher("cfaf7a3be30a27f2a21f", {
       cluster: "ap2",
       encrypted: true
@@ -68,18 +69,23 @@ class SearchBox extends React.Component {
     const UUID = this.state.search;
     const channel = pusher.subscribe(UUID);
 
-      await channel.bind("my-event", data => {
-        this.props.getMigrationData(data);
-      });
+    channel.bind("my-event", data => {
+      if (!isEmpty(data) && !this.state.redirect) {
+        Router.push({ pathname: "/migration", query: { UUID } });
+        this.setState({ redirect: true });
+      }
+      this.props.getMigrationData(data);
+    });
+
+    setTimeout(() => {
       if (isEmpty(this.props.messages)) {
-      Swal.fire(
-        "Migration?",
-        "The migration you entered does not exist or perhaps the migration is completed therfore check your email!!!",
-        "question"
-      );
-    } else {
-    Router.push({ pathname: "/migration", query: { UUID } });
-    }
+        Swal.fire(
+          "Migration?",
+          "The migration you entered does not exist or perhaps the migration is completed therfore check your email!!!",
+          "question"
+        );
+      }
+    }, 6000);
   };
 
   updateSearch = event => {
@@ -88,7 +94,7 @@ class SearchBox extends React.Component {
 
   Post = () => {
     return (
-      <MigrationButton onClick={() => this.subscribe()}>
+      <MigrationButton data-test="migrationbutton" onClick={() => this.subscribe()}>
         Track Migration
       </MigrationButton>
     );
