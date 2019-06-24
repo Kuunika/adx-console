@@ -47,7 +47,7 @@ const migrationPercentage = props => {
   } else if (props.message == 'migration completed' || props.service == 'failqueue') {
     return percent;
   } else {
-    return percent + '%';
+    return 0 + '%';
   }
 };
 

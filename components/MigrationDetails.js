@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import Pusher from "pusher-js/";
-import { withRouter } from "react-router-dom";
+import Router, { withRouter } from "next/router";
 import { connect } from "react-redux";
 import { getMigrationData } from "../redux/actions/migration";
 
@@ -44,15 +44,8 @@ const CenterText = styled.p`
   margin: 3px;
 `;
 
-// function isEmpty(obj) {
-//   for (var key in obj) {
-//     if (obj.hasOwnProperty(key)) return false;
-//   }
-//   return true;
-// }
-
-let chunk = 0;//2
-let migrated = 0;//6
+let chunk = 0; //2
+let migrated = 0; //6
 
 const migratedElements = props => {
   if (props.service == "validation") {
@@ -61,7 +54,8 @@ const migratedElements = props => {
     props.service == "migration" &&
     props.message == "migrating elements"
   ) {
-    migrated = props.chunkSize * props.chunkNumber;
+    chunk++;
+    migrated = props.chunkSize * chunk;
     return migrated;
   } else if (props.service == "email") {
     return migrated;
@@ -76,44 +70,37 @@ const total = props => {
   if (props.message == "migrating elements") {
     count = props.totalElements;
     return count;
+  } else if (props.message == "mediator") {
+    return (count = 0);
   } else {
     return count;
   }
 };
 
 const failers = props => {
-  if (props.service == "failqueue"){
+  if (props.service == "failqueue") {
     return count - migrated;
   } else {
     return 0;
   }
-}
+};
+
+let secounds = 0;
+let minutes = 0;
+let hours = 0;
+
 
 class Details extends React.Component {
-  //  componentDidlMount() {
-  //   const pusher = new Pusher("cfaf7a3be30a27f2a21f", {
-  //     cluster: "ap2",
-  //     encrypted: true
-  //   });
-  //   const channel = pusher.subscribe("my-channel");
-  //   const url = window.location.pathname;
-  //   const splited = url.split("/");
-  //   const UUID = splited[splited.length - 1];
-  //   channel.bind(UUID, data => {
-  //     this.props.getMigrationData(data);
-  //   });
-  // }
-
   render() {
     return (
       <DetailsDiv>
         <List>
-          <RightText>Migration #</RightText>
+          <RightText>Migration #{this.props.router.query.UUID}</RightText>
           <RightText>OpenLmis Data for April 2019 </RightText>
           <RightText>araruadam@yahoo.co.uk </RightText>
         </List>
         <List2>
-          <CenterText />
+          <CenterText>00:00:00</CenterText>
           <LeftText>Elapsed</LeftText>
         </List2>
         <List3>
@@ -124,7 +111,9 @@ class Details extends React.Component {
           <LeftText>
             {migratedElements(this.props.messages)}-- Data Elements Migrated
           </LeftText>
-          <LeftText>{failers(this.props.messages)}-- Data Elements Failed</LeftText>
+          <LeftText>
+            {failers(this.props.messages)}-- Data Elements Failed
+          </LeftText>
         </List3>
       </DetailsDiv>
     );
@@ -139,7 +128,9 @@ const mapStateToProps = state => ({
   messages: state.migration.migration
 });
 
-export default connect(
-  mapStateToProps,
-  { getMigrationData }
-)(Details);
+export default withRouter(
+  connect(
+    mapStateToProps,
+    { getMigrationData }
+  )(Details)
+);

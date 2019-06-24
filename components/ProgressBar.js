@@ -19,7 +19,9 @@ let complete = props => {
 };
 
 let InProgress = props => {
-  if (props.service == "validation") {
+  if (props.service == "mediator") {
+    return 1;
+  } else if (props.service == "validation") {
     return 2;
   } else if (props.service == "migration") {
     return 3;
@@ -28,7 +30,7 @@ let InProgress = props => {
   } else if (props.service == "email") {
     return 0;
   } else {
-    return 1;
+    return 0;
   }
 };
 
@@ -200,20 +202,6 @@ const ProgressText = styled.p`
 `;
 
 class Bar extends React.Component {
-  // state = {
-  //   messages: {}
-  // };
-
-  // componentDidMount() {
-  //   const pusher = new Pusher("cfaf7a3be30a27f2a21f", {
-  //     cluster: "ap2",
-  //     encrypted: true
-  //   });
-  //   const channel = pusher.subscribe("my-channel");
-  //   channel.bind("my-event", data => {
-  //     this.setState({ messages: data });
-  //   });
-  // }
 
   render() {
     return (
@@ -224,7 +212,7 @@ class Bar extends React.Component {
               service={
                 this.props.messages.service
                   ? this.props.messages.service
-                  : "validation"
+                  : "mediator"
               }
             />
           </ProgressBar>
