@@ -84,110 +84,30 @@ const List = styled.li`
   &.active + &:after {
     background-color: #609331;
   }
-`;
+  `;
 
+let stage = ["", "", "", "", ""];
+  
 const Stepper = props => {
-  if (props.service == "validation") {
     return (
       <>
-        <List service={props.service} className="active">
+        <List service={props.service} className={stage[0]}>
           Preparing Data
         </List>
-        <List service={props.service} className="">
+        <List service={props.service} className={stage[1]}>
           Validating Code
         </List>
-        <List service={props.service} className="">
+        <List service={props.service} className={stage[2]}>
           Migrating Data
         </List>
-        <List service={props.service} className="">
+        <List service={props.service} className={stage[3]}>
           Returning Failures
         </List>
-        <List service={props.service} className="">
+        <List service={props.service} className={stage[4]}>
           Sending Email
         </List>
       </>
     );
-  } else if (props.service == "migration") {
-    return (
-      <>
-        <List service={props.service} className="active">
-          Preparing Data
-        </List>
-        <List service={props.service} className="active">
-          Validating Code
-        </List>
-        <List service={props.service} service={props.service} className="">
-          Migrating Data
-        </List>
-        <List service={props.service} service={props.service} className="">
-          Returning Failures
-        </List>
-        <List service={props.service} service={props.service} className="">
-          Sending Email
-        </List>
-      </>
-    );
-  } else if (props.service == "failqueue") {
-    return (
-      <>
-        <List service={props.service} className="active">
-          Preparing Data
-        </List>
-        <List service={props.service} className="active">
-          Validating Code
-        </List>
-        <List service={props.service} className="active">
-          Migrating Data
-        </List>
-        <List service={props.service} className="">
-          Returning Failures
-        </List>
-        <List service={props.service} className="">
-          Sending Email
-        </List>
-      </>
-    );
-  } else if (props.service == "email") {
-    return (
-      <>
-        <List service={props.service} className="active">
-          Preparing Data
-        </List>
-        <List service={props.service} className="active">
-          Validating Code
-        </List>
-        <List service={props.service} className="active">
-          Migrating Data
-        </List>
-        <List service={props.service} className="active">
-          Rerunning Failures
-        </List>
-        <List service={props.service} className="active">
-          Sending Email
-        </List>
-      </>
-    );
-  } else {
-    return (
-      <>
-        <List service={props.service} className="">
-          Preparing Data
-        </List>
-        <List service={props.service} className="">
-          Validating Code
-        </List>
-        <List service={props.service} className="">
-          Migrating Data
-        </List>
-        <List service={props.service} className="">
-          Returning Failures
-        </List>
-        <List service={props.service} className="">
-          Sending Email
-        </List>
-      </>
-    );
-  }
 };
 
 const ProgressText = styled.p`
@@ -201,7 +121,29 @@ const ProgressText = styled.p`
   font-weight: bold;
 `;
 
+
 class Bar extends React.Component {
+  componentDidMount() 
+    {
+      if (this.props.service == "validation") {
+        stage.pop();
+        stage.unshift("active");
+      } else if (this.props.service == "migration") {
+        stage.pop();
+        stage.unshift("active");
+      } else if (this.props.service == "failqueue") {
+        stage.pop();
+        stage.unshift("active");
+      } else if (this.props.service == "email") {
+        stage.pop();
+        stage.pop()
+        stage.unshift("active");
+        stage.unshift("active");
+      } else {
+        return stage;
+      }
+    };
+  
 
   render() {
     return (
