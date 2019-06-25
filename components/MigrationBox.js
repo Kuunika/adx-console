@@ -7,8 +7,9 @@ import { connect } from "react-redux";
 const MigrationContainer = styled.div`
   background-color: #9498a2;
   height: 40px;
-  width: 1440px;
+  width: 1350px;
   margin-top: 0px;
+  margin: auto;
 `;
 
 const Bar = styled.div`
@@ -30,8 +31,9 @@ const BarText = styled.p`
 const BlueLine = styled.div`
   background-color: #091b58;
   height: 20px;
-  width: 1440px;
+  width: 1350px;
   margin-top: 0px;
+  margin: auto;
 `;
 
 let percent = 0;
@@ -74,7 +76,6 @@ class MigrationBox extends React.Component {
     return (
       <>
       <MigrationDetails />
-          <ProgressBar />
           <MigrationContainer>
             <Bar width={migrationPercentage(this.props.messages)} />
             <BarText>
