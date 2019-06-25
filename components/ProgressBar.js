@@ -122,23 +122,20 @@ const ProgressText = styled.p`
 `;
 
 
+
+
 class Bar extends React.Component {
   componentDidMount() 
     {
-      if (this.props.service == "validation") {
-        stage.pop();
-        stage.unshift("active");
-      } else if (this.props.service == "migration") {
-        stage.pop();
-        stage.unshift("active");
-      } else if (this.props.service == "failqueue") {
-        stage.pop();
-        stage.unshift("active");
-      } else if (this.props.service == "email") {
-        stage.pop();
-        stage.pop()
-        stage.unshift("active");
-        stage.unshift("active");
+      if (this.props.messages.service == "validation") {
+        stage.splice(0,1,'active');
+      } else if (this.props.messages.service == "migration") {
+        stage.splice(1,1,'active');
+      } else if (this.props.messages.service == "failqueue") {
+        stage.splice(2,1,'active');
+      } else if (this.props.messages.service == "email") {
+        stage.splice(3,1,'active');
+        stage.splice(4,1,'active');
       } else {
         return stage;
       }
