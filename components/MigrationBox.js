@@ -7,8 +7,9 @@ import { connect } from "react-redux";
 const MigrationContainer = styled.div`
   background-color: #9498a2;
   height: 40px;
-  width: 1440px;
+  width: 1350px;
   margin-top: 0px;
+  margin: auto;
 `;
 
 const Bar = styled.div`
@@ -30,58 +31,41 @@ const BarText = styled.p`
 const BlueLine = styled.div`
   background-color: #091b58;
   height: 20px;
-  width: 1440px;
+  width: 1350px;
   margin-top: 0px;
+  margin: auto;
 `;
 
-let percent = 0;
-
-const migrationPercentage = props => {
-  if (props.service == "migration" && props.message == "migrating elements") {
-    let chunk = props.totalElements / props.chunkSize;
-    return percent = (props.chunkNumber / chunk) * 100 + "%";
-  } else if(props.service == "email"){
-    return 100 + "%";
-  } else if(props.message == "migration started"){
-    return 0+"%";
-  } else if (props.message == 'migration completed' || props.service == 'failqueue') {
-    return percent;
-  } else {
-    return 0 + '%';
-  }
-};
-
 class MigrationBox extends React.Component {
-  // state = {
-  //   messages: {}
-  // };
+  constructor() {
+    super();
+    this.state = {
+      percent: 0
+    };
+  }
+  calculateMigrationPercentage = props => {
+    if (props.service == "migration" && props.chunkMigrated || props.service == "failqueue" && props.chunkMigrated) {
+      let chunk = props.chunkNumber * props.chunkSize;
+      this.setState({ percent: (chunk / props.totalElements) * 100 + "%" });
+    }
+  };
 
-  // componentDidMount() {
-  //   const pusher = new Pusher("cfaf7a3be30a27f2a21f", {
-  //     cluster: "ap2",
-  //     encrypted: true
-  //   });
-  //   const channel = pusher.subscribe("my-channel");
-  //   const url = window.location.pathname;
-  //   const splited = url.split("/");
-  //   const UUID = splited[splited.length - 1];
-  //   channel.bind(UUID, data => {
-  //     this.setState({ messages: data });
-  //   });
-  // }
+  componentDidUpdate(nextProp) {
+    if (
+      JSON.stringify(nextProp.messages) != JSON.stringify(this.props.messages)
+    )
+      this.calculateMigrationPercentage(this.props.messages);
+  }
 
   render() {
     return (
       <>
-      <MigrationDetails />
-          <ProgressBar />
-          <MigrationContainer>
-            <Bar width={migrationPercentage(this.props.messages)} />
-            <BarText>
-              {migrationPercentage(this.props.messages)} Total Migration
-            </BarText>
-          </MigrationContainer>
-          <BlueLine />
+        <MigrationDetails />
+        <MigrationContainer>
+          <Bar width={this.state.percent} />
+          <BarText>{this.state.percent} Total Migration</BarText>
+        </MigrationContainer>
+        <BlueLine />
       </>
     );
   }
@@ -91,6 +75,4 @@ const mapStateToProps = state => ({
   messages: state.migration.migration
 });
 
-export default connect(
-  mapStateToProps,
-)(MigrationBox);
+export default connect(mapStateToProps)(MigrationBox);

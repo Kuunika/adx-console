@@ -68,24 +68,23 @@ class SearchBox extends React.Component {
     });
     const UUID = this.state.search;
     const channel = pusher.subscribe(UUID);
-
+  
     channel.bind("my-event", data => {
       if (!isEmpty(data) && !this.state.redirect) {
         Router.push({ pathname: "/migration", query: { UUID } });
         this.setState({ redirect: true });
       }
       this.props.getMigrationData(data);
+      setTimeout(() => {
+        if (isEmpty(this.props.messages)) {
+          Swal.fire(
+            "Migration?",
+            "The migration you entered does not exist or perhaps the migration is completed therfore check your email!!!",
+            "question"
+          );
+        }
+      }, 6000);
     });
-
-    setTimeout(() => {
-      if (isEmpty(this.props.messages)) {
-        Swal.fire(
-          "Migration?",
-          "The migration you entered does not exist or perhaps the migration is completed therfore check your email!!!",
-          "question"
-        );
-      }
-    }, 6000);
   };
 
   updateSearch = event => {
@@ -94,7 +93,10 @@ class SearchBox extends React.Component {
 
   Post = () => {
     return (
-      <MigrationButton data-test="migrationbutton" onClick={() => this.subscribe()}>
+      <MigrationButton
+        data-test="migrationbutton"
+        onClick={() => this.subscribe()}
+      >
         Track Migration
       </MigrationButton>
     );
