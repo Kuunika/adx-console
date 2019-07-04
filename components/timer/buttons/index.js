@@ -1,3 +1,5 @@
+
+
 export default function Buttons(props) {
     const label = props.timingEvents.length % 2 === 0
         ? 'Start'

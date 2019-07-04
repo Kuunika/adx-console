@@ -3,7 +3,7 @@ import Pusher from "pusher-js/";
 import Router, { withRouter } from "next/router";
 import { connect } from "react-redux";
 import { getMigrationData } from "../redux/actions/migration";
-import StopWatch from "./timer";
+import Timer from "./timer";
 
 const DetailsDiv = styled.div`
   display: flex;
@@ -88,8 +88,7 @@ class Details extends React.Component {
           <RightText>araruadam@yahoo.co.uk </RightText>
         </List>
         <List2>
-          <StopWatch/>
-          <LeftText>Elapsed</LeftText>
+          <Timer/>
         </List2>
         <List3>
           <LeftText>Migration Started 5 October 2019 </LeftText>
