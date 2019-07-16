@@ -3,7 +3,11 @@ import Pusher from "pusher-js/";
 import Router, { withRouter } from "next/router";
 import { connect } from "react-redux";
 import { getMigrationData } from "../redux/actions/migration";
-import Timer from "./timer";
+import Moment from "react-moment";
+import moment from "moment";
+import ms from "pretty-ms";
+import Swal from "sweetalert2";
+
 
 const DetailsDiv = styled.div`
   display: flex;
@@ -39,6 +43,10 @@ const LeftText = styled.p`
   margin: 3px;
 `;
 
+const TimerText = styled.p`
+  color: #7ed322;
+  font-size: 50px;
+`;
 
 class Details extends React.Component {
   constructor() {
@@ -46,22 +54,37 @@ class Details extends React.Component {
     this.state = {
       dataElements: 0,
       migrated: 0,
-      failed: 0
+      failed: 0,
+      time: 0,
+      display: '00 : 00 : 00',
+      isOn: false,
+      start: 0,
+      counter: 0
     };
+
+    this.stopTimer = this.stopTimer.bind(this);
   }
 
   migratedElements = props => {
-    if (
-      props.service == "migration" &&
-      props.chunkMigrated
-    ) {
+    if (props.service == "migration" && props.chunkMigrated) {
       this.setState({
         migrated: props.chunkSize * props.chunkNumber,
         dataElements: props.totalElements
       });
-    } else if (props.service == 'failqueue' && props.chunkMigrated) {
+    } else if (props.service == "email"){
+      this.stopTimer();
+      Swal.fire( {
+        title:'Migration completed',
+        html: 
+        `<p>Data Elements sent for migration: ${this.state.dataElements} <br>
+        Data Elements migrated: ${this.state.migrated} <br>
+        Data Elements failed: ${this.state.failed}</p>`,
+      }
+      );
+      Router.push({ pathname: "/" });
+    } else if (props.service == "failqueue" && props.chunkMigrated) {
       this.setState({
-        failed: this.state.failed -= props.chunkSize,
+        failed: (this.state.failed -= props.chunkSize),
         migrated: this.state.migrated + props.chunkSize
       });
     }
@@ -79,6 +102,26 @@ class Details extends React.Component {
     )
       this.migratedElements(this.props.messages);
   }
+
+  componentDidMount() {
+    this.setState({
+      isOn: true,
+      start: Date.now() - this.state.time
+    });
+    this.timer = setInterval(
+      () =>
+        this.setState({
+          display: moment(this.state.start).hour(0).minute(0).second(this.state.counter ++).format('HH : mm : ss')
+        }),
+      1000
+    );
+  }
+
+  stopTimer() {
+    this.setState({ isOn: false });
+    clearInterval(this.timer);
+  }
+
   render() {
     return (
       <DetailsDiv>
@@ -88,7 +131,7 @@ class Details extends React.Component {
           <RightText>araruadam@yahoo.co.uk </RightText>
         </List>
         <List2>
-          <Timer/>
+          <TimerText>{this.state.display}</TimerText>
         </List2>
         <List3>
           <LeftText>Migration Started 5 October 2019 </LeftText>

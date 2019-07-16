@@ -4,6 +4,8 @@ import Router, { withRouter } from "next/router";
 import { connect } from "react-redux";
 import { getMigrationData } from "../redux/actions/migration";
 import Swal from "sweetalert2";
+import { get } from "http";
+import * as axios from "axios";
 
 const OrangeLine = styled.div`
   background-color: #ffa200;
@@ -57,18 +59,41 @@ class SearchBox extends React.Component {
     this.state = {
       search: ``,
       messages: {},
-      redirect: false
+      redirect: false,
+      isLoaded: false,
+      items: [],
+      historyCurrent: []
     };
   }
 
+  // historyData = async () => {
+  //   const res = await axios({
+  //     method: "get",
+  //     auth: {
+  //       username: "openlmis",
+  //       password: "openlmis"
+  //     },
+  //     url:
+  //       "http://142.93.203.254:5001/dhis2/notifications/38e3f056-c39e-4adf-99a7-5c122583e3dd"
+  //   });
+  
+  //   let migrationInfo = res.data;
+  //   this.setState({
+  //     items: migrationInfo
+  //   });
+
+  // }
+
   subscribe = () => {
+
+    // this.historyData();
     const pusher = new Pusher("cfaf7a3be30a27f2a21f", {
       cluster: "ap2",
       encrypted: true
     });
     const UUID = this.state.search;
     const channel = pusher.subscribe(UUID);
-  
+
     channel.bind("my-event", data => {
       if (!isEmpty(data) && !this.state.redirect) {
         Router.push({ pathname: "/migration", query: { UUID } });
@@ -84,6 +109,11 @@ class SearchBox extends React.Component {
           );
         }
       }, 6000);
+
+      //   this.setState({
+      //     historyCurrent: [...this.state.items, this.props.messages]
+      //   });
+      // console.log(this.state.historyCurrent);
     });
   };
 
@@ -103,6 +133,7 @@ class SearchBox extends React.Component {
   };
 
   render() {
+    
     return (
       <FieldButtonDiv>
         <SearchFiled

@@ -10,13 +10,16 @@ const MigrationContainer = styled.div`
   width: 1350px;
   margin-top: 0px;
   margin: auto;
+  border-radius: 25px;
+  border: solid #091b58;
 `;
 
 const Bar = styled.div`
-  background-color: #8cbc5a;
+  background-image: linear-gradient(#a6c76a, #89bb58);
   height: 40px;
   width: ${props => props.width};
   margin-top: 0px;
+  border-radius: 25px;
 `;
 
 const BarText = styled.p`
@@ -34,6 +37,7 @@ const BlueLine = styled.div`
   width: 1350px;
   margin-top: 0px;
   margin: auto;
+  border-radius: 25px;
 `;
 
 class MigrationBox extends React.Component {
@@ -44,7 +48,10 @@ class MigrationBox extends React.Component {
     };
   }
   calculateMigrationPercentage = props => {
-    if (props.service == "migration" && props.chunkMigrated || props.service == "failqueue" && props.chunkMigrated) {
+    if (
+      (props.service == "migration" && props.chunkMigrated) ||
+      (props.service == "failqueue" && props.chunkMigrated)
+    ) {
       let chunk = props.chunkNumber * props.chunkSize;
       this.setState({ percent: (chunk / props.totalElements) * 100 + "%" });
     }
@@ -65,7 +72,6 @@ class MigrationBox extends React.Component {
           <Bar width={this.state.percent} />
           <BarText>{this.state.percent} Total Migration</BarText>
         </MigrationContainer>
-        <BlueLine />
       </>
     );
   }
