@@ -1,17 +1,22 @@
-import { FETCH_MIGRATION } from "../actions/types";
+import { FETCH_MIGRATION,ADD_HISTORY } from "../actions/types";
 
 const initialState = {
-  migration: {},
+  migration: [],
   error:""
 };
 
 export default function(state = initialState, action) {
   switch (action.type) {
+    case ADD_HISTORY:
+        return {
+          ...state,
+          migration: action.payload
+        };
     case FETCH_MIGRATION:
       if(action.payload.service){
         return {
           ...state,
-          migration: action.payload
+          migration: [...state.migration,action.payload]
         };
       }
       return {

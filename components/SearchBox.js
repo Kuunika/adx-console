@@ -2,7 +2,7 @@ import styled from "styled-components";
 import Link from "next/link";
 import Router, { withRouter } from "next/router";
 import { connect } from "react-redux";
-import { getMigrationData } from "../redux/actions/migration";
+import { getMigrationData,addHistory } from "../redux/actions/migration";
 import Swal from "sweetalert2";
 import { get } from "http";
 import * as axios from "axios";
@@ -66,33 +66,36 @@ class SearchBox extends React.Component {
     };
   }
 
-  // historyData = async () => {
-  //   const res = await axios({
-  //     method: "get",
-  //     auth: {
-  //       username: "openlmis",
-  //       password: "openlmis"
-  //     },
-  //     url:
-  //       "http://142.93.203.254:5001/dhis2/notifications/38e3f056-c39e-4adf-99a7-5c122583e3dd"
-  //   });
-  
-  //   let migrationInfo = res.data;
-  //   this.setState({
-  //     items: migrationInfo
-  //   });
+  subscribe = async () => {
+    const UUID = this.state.search;
 
-  // }
+    const res = await axios({
+      method: "get",
+      auth: {
+        username: "openlmis",
+        password: "openlmis"
+      },
+      url:
+        `http://142.93.203.254:5001/dhis2/notifications/${UUID}`
+    });    
 
-  subscribe = () => {
+    this.props.addHistory(res.data)
+    // setTimeout(() => {
+    //   if (isEmpty(this.props.messages)) {
+    //     Swal.fire(
+    //       "Migration?",
+    //       "The migration you entered does not exist or perhaps the migration is completed so check your email!!!",
+    //       "question"
+    //     );
+    //   }
+    // }, 6000);
 
-    // this.historyData();
     const pusher = new Pusher("cfaf7a3be30a27f2a21f", {
       cluster: "ap2",
       encrypted: true
     });
-    const UUID = this.state.search;
-    const channel = pusher.subscribe(UUID);
+    const myChannel = 'my-channel'
+    const channel = pusher.subscribe(myChannel);
 
     channel.bind("my-event", data => {
       if (!isEmpty(data) && !this.state.redirect) {
@@ -100,21 +103,18 @@ class SearchBox extends React.Component {
         this.setState({ redirect: true });
       }
       this.props.getMigrationData(data);
-      setTimeout(() => {
-        if (isEmpty(this.props.messages)) {
-          Swal.fire(
-            "Migration?",
-            "The migration you entered does not exist or perhaps the migration is completed therfore check your email!!!",
-            "question"
-          );
-        }
-      }, 6000);
 
-      //   this.setState({
-      //     historyCurrent: [...this.state.items, this.props.messages]
-      //   });
-      // console.log(this.state.historyCurrent);
     });
+
+    setTimeout(() => {
+      if (this.props.messages.length==0) {
+        Swal.fire(
+          "Migration?",
+          "The migration you entered does not exist or perhaps the migration is completed so check your email!!!",
+          "question"
+        );
+      }
+    }, 6000);
   };
 
   updateSearch = event => {
@@ -133,7 +133,6 @@ class SearchBox extends React.Component {
   };
 
   render() {
-    
     return (
       <FieldButtonDiv>
         <SearchFiled
@@ -155,6 +154,6 @@ const mapStateToProps = state => ({
 export default withRouter(
   connect(
     mapStateToProps,
-    { getMigrationData }
+    { getMigrationData,addHistory }
   )(SearchBox)
 );

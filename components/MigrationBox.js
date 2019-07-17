@@ -31,15 +31,6 @@ const BarText = styled.p`
   margin-top: -30px;
 `;
 
-const BlueLine = styled.div`
-  background-color: #091b58;
-  height: 20px;
-  width: 1350px;
-  margin-top: 0px;
-  margin: auto;
-  border-radius: 25px;
-`;
-
 class MigrationBox extends React.Component {
   constructor() {
     super();
@@ -48,12 +39,14 @@ class MigrationBox extends React.Component {
     };
   }
   calculateMigrationPercentage = props => {
-    if (
-      (props.service == "migration" && props.chunkMigrated) ||
-      (props.service == "failqueue" && props.chunkMigrated)
-    ) {
-      let chunk = props.chunkNumber * props.chunkSize;
-      this.setState({ percent: (chunk / props.totalElements) * 100 + "%" });
+    for (let oneMigration of props) {
+      if (
+        (oneMigration.service == "migration" && oneMigration.migrated) ||
+        (oneMigration.service == "failqueue" && oneMigration.migrated)
+      ) {
+        let chunk = oneMigration.chunkNumber * oneMigration.chunkSize;
+        this.setState({ percent: (chunk / oneMigration.totalElements) * 100 + "%" });
+      }
     }
   };
 

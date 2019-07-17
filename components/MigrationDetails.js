@@ -8,7 +8,6 @@ import moment from "moment";
 import ms from "pretty-ms";
 import Swal from "sweetalert2";
 
-
 const DetailsDiv = styled.div`
   display: flex;
   padding: 30px;
@@ -56,7 +55,7 @@ class Details extends React.Component {
       migrated: 0,
       failed: 0,
       time: 0,
-      display: '00 : 00 : 00',
+      display: "00 : 00 : 00",
       isOn: false,
       start: 0,
       counter: 0
@@ -66,34 +65,36 @@ class Details extends React.Component {
   }
 
   migratedElements = props => {
-    if (props.service == "migration" && props.chunkMigrated) {
-      this.setState({
-        migrated: props.chunkSize * props.chunkNumber,
-        dataElements: props.totalElements
-      });
-    } else if (props.service == "email"){
-      this.stopTimer();
-      Swal.fire( {
-        title:'Migration completed',
-        html: 
-        `<p>Data Elements sent for migration: ${this.state.dataElements} <br>
-        Data Elements migrated: ${this.state.migrated} <br>
-        Data Elements failed: ${this.state.failed}</p>`,
+    for (let oneMigration of props) {
+      console.log(oneMigration);
+      if (oneMigration.service == "migration" && oneMigration.migrated) {
+        this.setState({
+          migrated: oneMigration.chunkSize * oneMigration.chunkNumber,
+          dataElements: oneMigration.totalElements
+        });
+      } else if (oneMigration.service == "email") {
+        this.stopTimer();
+        Swal.fire({
+          title: "Migration completed",
+          html: `<p>Data Elements sent for migration: ${this.state.dataElements}<br>
+          Data Elements migrated: ${this.state.migrated} <br>
+          Data Elements failed: ${this.state.failed} <br></p>`
+          
+        });
+      } else if (oneMigration.service == "failqueue" && oneMigration.migrated) {
+        this.setState({
+          failed: (this.state.failed -= oneMigration.chunkSize),
+          migrated: this.state.migrated + oneMigration.chunkSize
+        });
+      } else {
+        this.setState({
+          failed:
+            !oneMigration.migrated && oneMigration.chunkSize
+              ? this.state.failed + oneMigration.chunkSize
+              : this.state.failed
+        });
       }
-      );
-      Router.push({ pathname: "/" });
-    } else if (props.service == "failqueue" && props.chunkMigrated) {
-      this.setState({
-        failed: (this.state.failed -= props.chunkSize),
-        migrated: this.state.migrated + props.chunkSize
-      });
     }
-    this.setState({
-      failed:
-        !props.chunkMigrated && props.chunkSize
-          ? this.state.failed + props.chunkSize
-          : this.state.failed
-    });
   };
 
   componentDidUpdate(nextProp) {
@@ -111,7 +112,11 @@ class Details extends React.Component {
     this.timer = setInterval(
       () =>
         this.setState({
-          display: moment(this.state.start).hour(0).minute(0).second(this.state.counter ++).format('HH : mm : ss')
+          display: moment(this.state.start)
+            .hour(0)
+            .minute(0)
+            .second(this.state.counter++)
+            .format("HH : mm : ss")
         }),
       1000
     );
