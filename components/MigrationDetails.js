@@ -3,6 +3,10 @@ import Pusher from "pusher-js/";
 import Router, { withRouter } from "next/router";
 import { connect } from "react-redux";
 import { getMigrationData } from "../redux/actions/migration";
+import Moment from "react-moment";
+import moment from "moment";
+import ms from "pretty-ms";
+import Swal from "sweetalert2";
 
 const DetailsDiv = styled.div`
   display: flex;
@@ -38,59 +42,111 @@ const LeftText = styled.p`
   margin: 3px;
 `;
 
-const CenterText = styled.p`
+const TimerText = styled.p`
   color: #7ed322;
-  font-size: 40px;
-  margin: 3px;
+  font-size: 50px;
 `;
 
-let chunk = 0; //2
-let migrated = 0; //6
-
-const migratedElements = props => {
-  if (props.service == "validation") {
-    return migrated;
-  } else if (
-    props.service == "migration" &&
-    props.message == "migrating elements"
-  ) {
-    chunk++;
-    migrated = props.chunkSize * chunk;
-    return migrated;
-  } else if (props.service == "email") {
-    return migrated;
-  } else {
-    return migrated;
-  }
-};
-
-let count = 0;
-
-const total = props => {
-  if (props.message == "migrating elements") {
-    count = props.totalElements;
-    return count;
-  } else if (props.message == "mediator") {
-    return (count = 0);
-  } else {
-    return count;
-  }
-};
-
-const failers = props => {
-  if (props.service == "failqueue") {
-    return count - migrated;
-  } else {
-    return 0;
-  }
-};
-
-let secounds = 0;
-let minutes = 0;
-let hours = 0;
-
-
 class Details extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      dataElements: 0,
+      migrated: 0,
+      failed: 0,
+      time: 0,
+      display: "00 : 00 : 00",
+      isOn: false,
+      start: 0,
+      now: 0,
+      diffrence: 0
+    };
+
+    this.stopTimer = this.stopTimer.bind(this);
+  }
+
+  migrationStartTime = props => {
+    if (props.length > 0) {
+      return props[0].timestamp;
+    }
+    return Date.now();
+  };
+
+  migratedElements = props => {
+    for (let oneMigration of props) {
+      if (oneMigration.service == "migration" && oneMigration.migrated) {
+        this.setState({
+          migrated: oneMigration.chunkSize * oneMigration.chunkNumber,
+          dataElements: oneMigration.totalElements
+        });
+      } else if (oneMigration.service == "email") {
+        this.stopTimer();
+        Swal.fire({
+          title: "Migration completed",
+          html: `<p>Data Elements sent for migration: ${
+            this.state.dataElements
+          }<br>
+          Data Elements migrated: ${this.state.migrated} <br>
+          Data Elements failed: ${this.state.failed} <br></p>
+          <a href="/" style="background-image: linear-gradient(#009933,#33cc33);
+          border: none;
+          color: white;
+          padding: 15px 32px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 16px;
+          margin: 4px 2px;
+          cursor: pointer;
+          border-radius: 20px;
+          margin-top: 25px;
+          margin-bottom: 60px;">OK</a>`,
+          showConfirmButton: false
+        });
+      } else if (oneMigration.service == "failqueue" && oneMigration.migrated) {
+        this.setState({
+          failed: (this.state.failed -= oneMigration.chunkSize),
+          migrated: this.state.migrated + oneMigration.chunkSize
+        });
+      } else {
+        this.setState({
+          failed:
+            !oneMigration.migrated && oneMigration.chunkSize
+              ? this.state.failed + oneMigration.chunkSize
+              : this.state.failed
+        });
+      }
+    }
+  };
+
+  componentDidUpdate(nextProp) {
+    if (
+      JSON.stringify(nextProp.messages) != JSON.stringify(this.props.messages)
+    )
+      this.migratedElements(this.props.messages);
+  }
+
+  componentDidMount() {
+    this.setState({
+      isOn: true,
+      start: moment(this.props.messages[0].timestamp), //start time from API endpoint
+      now: moment(Date.now())
+    });
+    setInterval(() => {
+      const now = moment(Date.now());
+      const duration = moment.duration(now.diff(this.state.start));
+      const { hours, minutes, seconds } = duration._data;
+      this.setState({
+        display: `${hours}: ${minutes}: ${seconds}`
+      });
+    }, 0);
+  }
+
+  stopTimer() {
+    this.setState({ isOn: false });
+    clearInterval(this.timer);
+  }
+
   render() {
     return (
       <DetailsDiv>
@@ -100,29 +156,20 @@ class Details extends React.Component {
           <RightText>araruadam@yahoo.co.uk </RightText>
         </List>
         <List2>
-          <CenterText>00:00:00</CenterText>
-          <LeftText>Elapsed</LeftText>
+          <TimerText>{this.state.display}</TimerText>
         </List2>
         <List3>
           <LeftText>Migration Started 5 October 2019 </LeftText>
           <LeftText>
-            {total(this.props.messages)}-- Data Elements Sent to be migrated
+            {this.state.dataElements}-- Data Elements Sent to be migrated
           </LeftText>
-          <LeftText>
-            {migratedElements(this.props.messages)}-- Data Elements Migrated
-          </LeftText>
-          <LeftText>
-            {failers(this.props.messages)}-- Data Elements Failed
-          </LeftText>
+          <LeftText>{this.state.migrated}-- Data Elements Migrated</LeftText>
+          <LeftText>{this.state.failed}-- Data Elements Failed</LeftText>
         </List3>
       </DetailsDiv>
     );
   }
 }
-
-// Details.propTypes = {
-//   messages: PropTypes.array.isRequired
-// };
 
 const mapStateToProps = state => ({
   messages: state.migration.migration

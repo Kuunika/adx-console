@@ -10,13 +10,16 @@ const MigrationContainer = styled.div`
   width: 1350px;
   margin-top: 0px;
   margin: auto;
+  border-radius: 25px;
+  border: solid #091b58;
 `;
 
 const Bar = styled.div`
-  background-color: #8cbc5a;
+  background-image: linear-gradient(#a6c76a, #89bb58);
   height: 40px;
   width: ${props => props.width};
   margin-top: 0px;
+  border-radius: 25px;
 `;
 
 const BarText = styled.p`
@@ -28,61 +31,40 @@ const BarText = styled.p`
   margin-top: -30px;
 `;
 
-const BlueLine = styled.div`
-  background-color: #091b58;
-  height: 20px;
-  width: 1350px;
-  margin-top: 0px;
-  margin: auto;
-`;
-
-let percent = 0;
-
-const migrationPercentage = props => {
-  if (props.service == "migration" && props.message == "migrating elements") {
-    let chunk = props.totalElements / props.chunkSize;
-    return percent = (props.chunkNumber / chunk) * 100 + "%";
-  } else if(props.service == "email"){
-    return 100 + "%";
-  } else if(props.message == "migration started"){
-    return 0+"%";
-  } else if (props.message == 'migration completed' || props.service == 'failqueue') {
-    return percent;
-  } else {
-    return 0 + '%';
-  }
-};
-
 class MigrationBox extends React.Component {
-  // state = {
-  //   messages: {}
-  // };
+  constructor() {
+    super();
+    this.state = {
+      percent: 0
+    };
+  }
+  calculateMigrationPercentage = props => {
+    for (let oneMigration of props) {
+      if (
+        (oneMigration.service == "migration" && oneMigration.migrated) ||
+        (oneMigration.service == "failqueue" && oneMigration.migrated)
+      ) {
+        let chunk = oneMigration.chunkNumber * oneMigration.chunkSize;
+        this.setState({ percent: (chunk / oneMigration.totalElements) * 100 + "%" });
+      }
+    }
+  };
 
-  // componentDidMount() {
-  //   const pusher = new Pusher("cfaf7a3be30a27f2a21f", {
-  //     cluster: "ap2",
-  //     encrypted: true
-  //   });
-  //   const channel = pusher.subscribe("my-channel");
-  //   const url = window.location.pathname;
-  //   const splited = url.split("/");
-  //   const UUID = splited[splited.length - 1];
-  //   channel.bind(UUID, data => {
-  //     this.setState({ messages: data });
-  //   });
-  // }
+  componentDidUpdate(nextProp) {
+    if (
+      JSON.stringify(nextProp.messages) != JSON.stringify(this.props.messages)
+    )
+      this.calculateMigrationPercentage(this.props.messages);
+  }
 
   render() {
     return (
       <>
-      <MigrationDetails />
-          <MigrationContainer>
-            <Bar width={migrationPercentage(this.props.messages)} />
-            <BarText>
-              {migrationPercentage(this.props.messages)} Total Migration
-            </BarText>
-          </MigrationContainer>
-          <BlueLine />
+        <MigrationDetails />
+        <MigrationContainer>
+          <Bar width={this.state.percent} />
+          <BarText>{this.state.percent} Total Migration</BarText>
+        </MigrationContainer>
       </>
     );
   }
@@ -92,6 +74,4 @@ const mapStateToProps = state => ({
   messages: state.migration.migration
 });
 
-export default connect(
-  mapStateToProps,
-)(MigrationBox);
+export default connect(mapStateToProps)(MigrationBox);

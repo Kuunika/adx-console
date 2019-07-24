@@ -86,110 +86,6 @@ const List = styled.li`
   }
 `;
 
-const Stepper = props => {
-  if (props.service == "validation") {
-    return (
-      <>
-        <List service={props.service} className="active">
-          Preparing Data
-        </List>
-        <List service={props.service} className="">
-          Validating Code
-        </List>
-        <List service={props.service} className="">
-          Migrating Data
-        </List>
-        <List service={props.service} className="">
-          Returning Failures
-        </List>
-        <List service={props.service} className="">
-          Sending Email
-        </List>
-      </>
-    );
-  } else if (props.service == "migration") {
-    return (
-      <>
-        <List service={props.service} className="active">
-          Preparing Data
-        </List>
-        <List service={props.service} className="active">
-          Validating Code
-        </List>
-        <List service={props.service} service={props.service} className="">
-          Migrating Data
-        </List>
-        <List service={props.service} service={props.service} className="">
-          Returning Failures
-        </List>
-        <List service={props.service} service={props.service} className="">
-          Sending Email
-        </List>
-      </>
-    );
-  } else if (props.service == "failqueue") {
-    return (
-      <>
-        <List service={props.service} className="active">
-          Preparing Data
-        </List>
-        <List service={props.service} className="active">
-          Validating Code
-        </List>
-        <List service={props.service} className="active">
-          Migrating Data
-        </List>
-        <List service={props.service} className="">
-          Returning Failures
-        </List>
-        <List service={props.service} className="">
-          Sending Email
-        </List>
-      </>
-    );
-  } else if (props.service == "email") {
-    return (
-      <>
-        <List service={props.service} className="active">
-          Preparing Data
-        </List>
-        <List service={props.service} className="active">
-          Validating Code
-        </List>
-        <List service={props.service} className="active">
-          Migrating Data
-        </List>
-        <List service={props.service} className="active">
-          Rerunning Failures
-        </List>
-        <List service={props.service} className="active">
-          Sending Email
-        </List>
-      </>
-    );
-  } else {
-    return (
-      <>
-        <List service={props.service} className="">
-          Preparing Data
-        </List>
-        <List service={props.service} className="">
-          Validating Code
-        </List>
-        <List service={props.service} className="">
-          Migrating Data
-        </List>
-        <List service={props.service} className="">
-          Returning Failures
-        </List>
-        <List service={props.service} className="">
-          Sending Email
-        </List>
-      </>
-    );
-  }
-};
-
 const ProgressText = styled.p`
   color: #0a122d;
   font-size: 16px;
@@ -202,20 +98,56 @@ const ProgressText = styled.p`
 `;
 
 class Bar extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      stage: ["", "", "", "", ""]
+    };
+  }
+
+  componentDidMount() {
+    if (this.props.messages.service == "validation") {
+      this.setState({ stage: ["active", "", "", "", ""] });
+    } else if (this.props.messages.service == "migration") {
+      this.setState({ stage: ["active", "active", "", "", ""] });
+    } else if (this.props.messages.service == "failqueue") {
+      this.setState({ stage: ["active", "active", "active", "", ""] });
+    } else if (this.props.messages.service == "email") {
+      this.setState({
+        stage: ["active", "active", "active", "active", "active"]
+      });
+    } else {
+      return this.state.stage;
+    }
+  }
+
+  Stepper = props => {
+    return (
+      <>
+        <List service={props.service} className={this.state.stage[0]}>
+          Preparing Data
+        </List>
+        <List service={props.service} className={this.state.stage[1]}>
+          Validating Code
+        </List>
+        <List service={props.service} className={this.state.stage[2]}>
+          Migrating Data
+        </List>
+        <List service={props.service} className={this.state.stage[3]}>
+          Returning Failures
+        </List>
+        <List service={props.service} className={this.state.stage[4]}>
+          Sending Email
+        </List>
+      </>
+    );
+  };
 
   render() {
     return (
       <>
         <Container>
-          <ProgressBar>
-            <Stepper
-              service={
-                this.props.messages.service
-                  ? this.props.messages.service
-                  : "mediator"
-              }
-            />
-          </ProgressBar>
+          <ProgressBar>{this.Stepper(this.props.messages)}</ProgressBar>
         </Container>
         <ProgressText>{this.props.messages.message}....</ProgressText>
       </>

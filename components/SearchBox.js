@@ -2,8 +2,10 @@ import styled from "styled-components";
 import Link from "next/link";
 import Router, { withRouter } from "next/router";
 import { connect } from "react-redux";
-import { getMigrationData } from "../redux/actions/migration";
+import { getMigrationData,addHistory } from "../redux/actions/migration";
 import Swal from "sweetalert2";
+import { get } from "http";
+import * as axios from "axios";
 
 const OrangeLine = styled.div`
   background-color: #ffa200;
@@ -57,16 +59,56 @@ class SearchBox extends React.Component {
     this.state = {
       search: ``,
       messages: {},
-      redirect: false
+      redirect: false,
+      isLoaded: false,
+      items: [],
+      historyCurrent: []
     };
   }
 
-  subscribe = () => {
-    const pusher = new Pusher("cfaf7a3be30a27f2a21f", {
+  migrationFinish = () => {
+    for(let object of this.props.messages){
+      if (object.service === "email"){
+        Swal.fire(
+          "Migration?",
+          "The migration you entered does not exist or perhaps the migration is completed so check your email!!!",
+          "question"
+        );
+      }
+    }
+  }
+
+  subscribe = async () => {
+    const UUID = this.state.search;
+
+    const res = await axios({
+      method: "get",
+      auth: {
+        username: "openlmis",
+        password: "openlmis"
+      },
+      url:
+        `http://142.93.203.254:5001/dhis2/notifications/${UUID}`
+    });    
+
+    this.props.addHistory(res.data)
+    this.migrationFinish();
+
+    
+    // setTimeout(() => {
+    //   if (isEmpty(this.props.messages)) {
+    //     Swal.fire(
+    //       "Migration?",
+    //       "The migration you entered does not exist or perhaps the migration is completed so check your email!!!",
+    //       "question"
+    //     );
+    //   }
+    // }, 6000);
+
+    const pusher = new Pusher("ebd3c5c2a06e092dbcba", {
       cluster: "ap2",
       encrypted: true
     });
-    const UUID = this.state.search;
     const channel = pusher.subscribe(UUID);
 
     channel.bind("my-event", data => {
@@ -78,14 +120,14 @@ class SearchBox extends React.Component {
     });
 
     setTimeout(() => {
-      if (isEmpty(this.props.messages)) {
+      if (this.props.messages.length==0) {
         Swal.fire(
           "Migration?",
-          "The migration you entered does not exist or perhaps the migration is completed therfore check your email!!!",
+          "The migration you entered does not exist or perhaps the migration is completed so check your email!!!",
           "question"
         );
       }
-    }, 6000);
+    }, 0);
   };
 
   updateSearch = event => {
@@ -94,12 +136,14 @@ class SearchBox extends React.Component {
 
   Post = () => {
     return (
-      <MigrationButton data-test="migrationbutton" onClick={() => this.subscribe()}>
+      <MigrationButton
+        data-test="migrationbutton"
+        onClick={() => this.subscribe()}
+      >
         Track Migration
       </MigrationButton>
     );
   };
-  //
 
   render() {
     return (
@@ -123,6 +167,6 @@ const mapStateToProps = state => ({
 export default withRouter(
   connect(
     mapStateToProps,
-    { getMigrationData }
+    { getMigrationData,addHistory }
   )(SearchBox)
 );
