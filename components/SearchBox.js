@@ -66,6 +66,18 @@ class SearchBox extends React.Component {
     };
   }
 
+  migrationFinish = () => {
+    for(let object of this.props.messages){
+      if (object.service === "email"){
+        Swal.fire(
+          "Migration?",
+          "The migration you entered does not exist or perhaps the migration is completed so check your email!!!",
+          "question"
+        );
+      }
+    }
+  }
+
   subscribe = async () => {
     const UUID = this.state.search;
 
@@ -80,6 +92,9 @@ class SearchBox extends React.Component {
     });    
 
     this.props.addHistory(res.data)
+    this.migrationFinish();
+
+    
     // setTimeout(() => {
     //   if (isEmpty(this.props.messages)) {
     //     Swal.fire(
@@ -90,12 +105,12 @@ class SearchBox extends React.Component {
     //   }
     // }, 6000);
 
-    const pusher = new Pusher("cfaf7a3be30a27f2a21f", {
+    const pusher = new Pusher("ebd3c5c2a06e092dbcba", {
       cluster: "ap2",
       encrypted: true
     });
     const myChannel = 'my-channel'
-    const channel = pusher.subscribe(myChannel);
+    const channel = pusher.subscribe(UUID);
 
     channel.bind("my-event", data => {
       if (!isEmpty(data) && !this.state.redirect) {
@@ -103,7 +118,6 @@ class SearchBox extends React.Component {
         this.setState({ redirect: true });
       }
       this.props.getMigrationData(data);
-
     });
 
     setTimeout(() => {
@@ -114,7 +128,7 @@ class SearchBox extends React.Component {
           "question"
         );
       }
-    }, 6000);
+    }, 0);
   };
 
   updateSearch = event => {

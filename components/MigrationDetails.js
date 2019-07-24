@@ -58,15 +58,22 @@ class Details extends React.Component {
       display: "00 : 00 : 00",
       isOn: false,
       start: 0,
-      counter: 0
+      now: 0,
+      diffrence: 0
     };
 
     this.stopTimer = this.stopTimer.bind(this);
   }
 
+  migrationStartTime = props => {
+    if (props.length > 0) {
+      return props[0].timestamp;
+    }
+    return Date.now();
+  };
+
   migratedElements = props => {
     for (let oneMigration of props) {
-      console.log(oneMigration);
       if (oneMigration.service == "migration" && oneMigration.migrated) {
         this.setState({
           migrated: oneMigration.chunkSize * oneMigration.chunkNumber,
@@ -76,10 +83,25 @@ class Details extends React.Component {
         this.stopTimer();
         Swal.fire({
           title: "Migration completed",
-          html: `<p>Data Elements sent for migration: ${this.state.dataElements}<br>
+          html: `<p>Data Elements sent for migration: ${
+            this.state.dataElements
+          }<br>
           Data Elements migrated: ${this.state.migrated} <br>
-          Data Elements failed: ${this.state.failed} <br></p>`
-          
+          Data Elements failed: ${this.state.failed} <br></p>
+          <a href="/" style="background-image: linear-gradient(#009933,#33cc33);
+          border: none;
+          color: white;
+          padding: 15px 32px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 16px;
+          margin: 4px 2px;
+          cursor: pointer;
+          border-radius: 20px;
+          margin-top: 25px;
+          margin-bottom: 60px;">OK</a>`,
+          showConfirmButton: false
         });
       } else if (oneMigration.service == "failqueue" && oneMigration.migrated) {
         this.setState({
@@ -107,19 +129,17 @@ class Details extends React.Component {
   componentDidMount() {
     this.setState({
       isOn: true,
-      start: Date.now() - this.state.time
+      start: moment(this.props.messages[0].timestamp), //start time from API endpoint
+      now: moment(Date.now())
     });
-    this.timer = setInterval(
-      () =>
-        this.setState({
-          display: moment(this.state.start)
-            .hour(0)
-            .minute(0)
-            .second(this.state.counter++)
-            .format("HH : mm : ss")
-        }),
-      1000
-    );
+    setInterval(() => {
+      const now = moment(Date.now());
+      const duration = moment.duration(now.diff(this.state.start));
+      const { hours, minutes, seconds } = duration._data;
+      this.setState({
+        display: `${hours}: ${minutes}: ${seconds}`
+      });
+    }, 0);
   }
 
   stopTimer() {
