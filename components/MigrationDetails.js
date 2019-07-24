@@ -1,11 +1,8 @@
 import styled from "styled-components";
-import Pusher from "pusher-js/";
-import Router, { withRouter } from "next/router";
+import { withRouter } from "next/router";
 import { connect } from "react-redux";
 import { getMigrationData } from "../redux/actions/migration";
-import Moment from "react-moment";
 import moment from "moment";
-import ms from "pretty-ms";
 import Swal from "sweetalert2";
 
 const DetailsDiv = styled.div`

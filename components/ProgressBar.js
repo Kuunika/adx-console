@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import Pusher from "pusher-js/";
 import { connect } from "react-redux";
 
 const Container = styled.div`

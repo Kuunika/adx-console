@@ -1,7 +1,5 @@
 import styled from "styled-components";
 import MigrationDetails from "./MigrationDetails";
-import ProgressBar from "./ProgressBar";
-import Pusher from "pusher-js/";
 import { connect } from "react-redux";
 
 const MigrationContainer = styled.div`
@@ -45,7 +43,9 @@ class MigrationBox extends React.Component {
         (oneMigration.service == "failqueue" && oneMigration.migrated)
       ) {
         let chunk = oneMigration.chunkNumber * oneMigration.chunkSize;
-        this.setState({ percent: (chunk / oneMigration.totalElements) * 100 + "%" });
+        this.setState({
+          percent: Math.round((chunk / oneMigration.totalElements) * 100) + "%"
+        });
       }
     }
   };

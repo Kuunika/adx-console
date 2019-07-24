@@ -1,10 +1,8 @@
 import styled from "styled-components";
-import Link from "next/link";
 import Router, { withRouter } from "next/router";
 import { connect } from "react-redux";
-import { getMigrationData,addHistory } from "../redux/actions/migration";
+import { getMigrationData, addHistory } from "../redux/actions/migration";
 import Swal from "sweetalert2";
-import { get } from "http";
 import * as axios from "axios";
 
 const OrangeLine = styled.div`
@@ -67,8 +65,8 @@ class SearchBox extends React.Component {
   }
 
   migrationFinish = () => {
-    for(let object of this.props.messages){
-      if (object.service === "email"){
+    for (let object of this.props.messages) {
+      if (object.service === "email") {
         Swal.fire(
           "Migration?",
           "The migration you entered does not exist or perhaps the migration is completed so check your email!!!",
@@ -76,7 +74,7 @@ class SearchBox extends React.Component {
         );
       }
     }
-  }
+  };
 
   subscribe = async () => {
     const UUID = this.state.search;
@@ -87,23 +85,11 @@ class SearchBox extends React.Component {
         username: "openlmis",
         password: "openlmis"
       },
-      url:
-        `http://142.93.203.254:5001/dhis2/notifications/${UUID}`
-    });    
+      url: `http://142.93.203.254:5001/dhis2/notifications/${UUID}`
+    });
 
-    this.props.addHistory(res.data)
+    this.props.addHistory(res.data);
     this.migrationFinish();
-
-    
-    // setTimeout(() => {
-    //   if (isEmpty(this.props.messages)) {
-    //     Swal.fire(
-    //       "Migration?",
-    //       "The migration you entered does not exist or perhaps the migration is completed so check your email!!!",
-    //       "question"
-    //     );
-    //   }
-    // }, 6000);
 
     const pusher = new Pusher("ebd3c5c2a06e092dbcba", {
       cluster: "ap2",
@@ -120,7 +106,7 @@ class SearchBox extends React.Component {
     });
 
     setTimeout(() => {
-      if (this.props.messages.length==0) {
+      if (this.props.messages.length == 0) {
         Swal.fire(
           "Migration?",
           "The migration you entered does not exist or perhaps the migration is completed so check your email!!!",
@@ -167,6 +153,6 @@ const mapStateToProps = state => ({
 export default withRouter(
   connect(
     mapStateToProps,
-    { getMigrationData,addHistory }
+    { getMigrationData, addHistory }
   )(SearchBox)
 );
