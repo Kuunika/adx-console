@@ -56,7 +56,8 @@ class Details extends React.Component {
       isOn: false,
       start: 0,
       now: 0,
-      diffrence: 0
+      diffrence: 0,
+      service: ''
     };
 
     this.stopTimer = this.stopTimer.bind(this);
@@ -74,7 +75,8 @@ class Details extends React.Component {
       if (oneMigration.service == "migration" && oneMigration.migrated) {
         this.setState({
           migrated: oneMigration.chunkSize * oneMigration.chunkNumber,
-          dataElements: oneMigration.totalElements
+          dataElements: oneMigration.totalElements,
+          service: oneMigration.service
         });
       } else if (oneMigration.service == "email") {
         this.stopTimer();
@@ -103,14 +105,16 @@ class Details extends React.Component {
       } else if (oneMigration.service == "failqueue" && oneMigration.migrated) {
         this.setState({
           failed: (this.state.failed -= oneMigration.chunkSize),
-          migrated: this.state.migrated + oneMigration.chunkSize
+          migrated: this.state.migrated + oneMigration.chunkSize,
+          service: oneMigration.service
         });
       } else {
         this.setState({
           failed:
             !oneMigration.migrated && oneMigration.chunkSize
               ? this.state.failed + oneMigration.chunkSize
-              : this.state.failed
+              : this.state.failed,
+              service: oneMigration.service
         });
       }
     }
@@ -148,7 +152,7 @@ class Details extends React.Component {
     return (
       <DetailsDiv>
         <List>
-          <RightText>Migration #{this.props.router.query.UUID}</RightText>
+          <RightText data-cy='migtaionID'>Migration #{this.props.router.query.UUID}</RightText>
           <RightText>OpenLmis Data for April 2019 </RightText>
           <RightText>araruadam@yahoo.co.uk </RightText>
         </List>
@@ -157,6 +161,7 @@ class Details extends React.Component {
         </List2>
         <List3>
           <LeftText>Migration Started 5 October 2019 </LeftText>
+          <LeftText>Status--{this.state.service}</LeftText>
           <LeftText>
             {this.state.dataElements}-- Data Elements Sent to be migrated
           </LeftText>
