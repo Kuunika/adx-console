@@ -29,15 +29,22 @@ const BarText = styled.p`
   margin-top: -30px;
 `;
 
+const Status = styled.h3`
+  text-align: center;
+  color: #0a122d;
+`;
+
 class MigrationBox extends React.Component {
   constructor() {
     super();
     this.state = {
-      percent: 0
+      percent: 0,
+      service: ''
     };
   }
   calculateMigrationPercentage = props => {
     for (let oneMigration of props) {
+      this.setState({service: oneMigration.message})
       if (
         (oneMigration.service == "migration" && oneMigration.migrated) ||
         (oneMigration.service == "failqueue" && oneMigration.migrated)
@@ -61,6 +68,10 @@ class MigrationBox extends React.Component {
     return (
       <>
         <MigrationDetails />
+        <div>
+          <Status>{this.state.service}....</Status>
+
+        </div>
         <MigrationContainer>
           <Bar width={this.state.percent} />
           <BarText>{this.state.percent} Total Migration</BarText>

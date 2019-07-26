@@ -76,7 +76,6 @@ class Details extends React.Component {
         this.setState({
           migrated: oneMigration.chunkSize * oneMigration.chunkNumber,
           dataElements: oneMigration.totalElements,
-          service: oneMigration.service
         });
       } else if (oneMigration.service == "email") {
         this.stopTimer();
@@ -106,7 +105,6 @@ class Details extends React.Component {
         this.setState({
           failed: (this.state.failed -= oneMigration.chunkSize),
           migrated: this.state.migrated + oneMigration.chunkSize,
-          service: oneMigration.service
         });
       } else {
         this.setState({
@@ -114,7 +112,6 @@ class Details extends React.Component {
             !oneMigration.migrated && oneMigration.chunkSize
               ? this.state.failed + oneMigration.chunkSize
               : this.state.failed,
-              service: oneMigration.service
         });
       }
     }
@@ -152,7 +149,7 @@ class Details extends React.Component {
     return (
       <DetailsDiv>
         <List>
-          <RightText data-cy='migtaionID'>Migration #{this.props.router.query.UUID}</RightText>
+          <RightText data-cy="migtaionID">Migration #{this.props.router.query.UUID}</RightText>
           <RightText>OpenLmis Data for April 2019 </RightText>
           <RightText>araruadam@yahoo.co.uk </RightText>
         </List>
@@ -161,7 +158,6 @@ class Details extends React.Component {
         </List2>
         <List3>
           <LeftText>Migration Started 5 October 2019 </LeftText>
-          <LeftText>Status--{this.state.service}</LeftText>
           <LeftText>
             {this.state.dataElements}-- Data Elements Sent to be migrated
           </LeftText>

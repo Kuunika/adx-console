@@ -91,30 +91,31 @@ class SearchBox extends React.Component {
     this.props.addHistory(res.data);
     this.migrationFinish();
 
-    const pusher = new Pusher("ebd3c5c2a06e092dbcba", {
-      cluster: "ap2",
-      encrypted: true
-    });
-    const channel = pusher.subscribe(UUID);
-
-    channel.bind("my-event", data => {
-      if (!isEmpty(data) && !this.state.redirect) {
-        Router.push({ pathname: "/migration", query: { UUID } });
-        this.setState({ redirect: true });
-      }
-      this.props.getMigrationData(data);
-    });
-
-    setTimeout(() => {
-      if (this.props.messages.length == 0) {
-        Swal.fire(
-          "Migration?",
-          "The migration you entered does not exist or perhaps the migration is completed so check your email!!!",
-          "question"
-        );
-      }
-    }, 0);
+    
+     const pusher = new Pusher("ebd3c5c2a06e092dbcba", {
+        cluster: "ap2",
+        encrypted: true
+      });
+      const myChannel = 'my-channel'
+      const channel = pusher.subscribe(UUID);
+  
+      channel.bind("my-event", data => {
+        if (!isEmpty(data) && !this.state.redirect) {
+          Router.push({ pathname: "/migration", query: { UUID } });
+          this.setState({redirect: true})
+        } 
+        this.props.getMigrationData(data);
+      });
+  
+          if (this.props.messages.length == 0) {
+          Swal.fire(
+            "Migration?",
+            "The migration you entered does not exist or perhaps the migration is completed so check your email!!!",
+            "question"
+          );
+        } 
   };
+
 
   updateSearch = event => {
     this.setState({ search: event.target.value });
