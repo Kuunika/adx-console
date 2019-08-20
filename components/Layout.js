@@ -5,9 +5,9 @@ import Footer from "./footer";
 import "../style.css";
 
 const Container = styled.div`
-  background-color: #596287;
+  background-color: #eaeaea;
   min-height: calc(50vh - 1rem);
-  padding: 0px;
+  padding: 10px;
   margin: 0px;
 `;
 
@@ -18,8 +18,10 @@ const BlueBackground = styled.body`
 const Layout = props => (
   <BlueBackground>
     <Logoimage />
-    <Title />
-    <Container>{props.children}</Container>
+    <Container>
+      <Title />
+      {props.children}
+    </Container>
     <Footer />
   </BlueBackground>
 );

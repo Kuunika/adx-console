@@ -2,7 +2,8 @@ import { FETCH_MIGRATION,ADD_HISTORY } from "../actions/types";
 
 const initialState = {
   migration: [],
-  error:""
+  error:"",
+  // metaData: {},
 };
 
 export default function(state = initialState, action) {
@@ -12,6 +13,11 @@ export default function(state = initialState, action) {
           ...state,
           migration: action.payload
         };
+    // case FETCH_META_DATA:
+    //     return {
+    //       ...state,
+    //       metaData: action.payload
+    //     }
     case FETCH_MIGRATION:
       if(action.payload.service){
         return {

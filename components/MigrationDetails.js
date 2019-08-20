@@ -5,14 +5,35 @@ import { getMigrationData } from "../redux/actions/migration";
 import moment from "moment";
 import Swal from "sweetalert2";
 
+const TimerDiv = styled.div`
+  margin-top: 10px;
+  margin-bottom: 0px;
+  text-align: center;
+`;
+
+const StopWatchText = styled.p`
+  color: black;
+  font-size: 20px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+`;
+
 const DetailsDiv = styled.div`
   display: flex;
-  padding: 30px;
+  padding: 10px;
 `;
 
 const List = styled.div`
   display: inline-block;
   flex: 1;
+  background: #ffffff;
+  width: 30px;
+  margin-right: 30px;
+  border-radius: 8px;
+  box-shadow: 3px 3px #b7b7b7;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  margin-left: 250px;
 `;
 
 const List2 = styled.div`
@@ -24,24 +45,47 @@ const List2 = styled.div`
 const List3 = styled.div`
   flex: 1;
   display: inline-block;
-  text-align: right;
+  background: #ffffff;
+  width: 30px;
+  margin-left: 30px;
+  margin-right: 270px;
+  border-radius: 8px;
+  box-shadow: 3px 3px #b7b7b7;
+  padding-top: 40px;
+  padding-bottom: 40px;
 `;
 
 const RightText = styled.p`
-  color: #ffffff;
-  font-size: 25px;
+  color: #464646;
+  font-size: 15px;
   margin: 3px;
+  font-family: "Verdana", Geneva, sans-serif;
+  font-weight: bold;
+  text-align: right;
 `;
 
 const LeftText = styled.p`
-  color: #ffffff;
-  font-size: 18px;
+  color: #464646;
+  font-size: 15px;
   margin: 3px;
+  font-family: "Verdana", Geneva, sans-serif;
+  font-weight: bold;
+  text-align: left;
 `;
 
 const TimerText = styled.p`
-  color: #7ed322;
-  font-size: 50px;
+  color: #4f6e2b;
+  font-size: 70px;
+  margin-bottom: 0px;
+  margin-top: 0px;
+`;
+
+const LeftNewDiv = styled.div`
+  width: 50%;
+`;
+
+const RightNewDiv = styled.div`
+  width: 50%;
 `;
 
 class Details extends React.Component {
@@ -52,15 +96,15 @@ class Details extends React.Component {
       migrated: 0,
       failed: 0,
       time: 0,
-      display: "00 : 00 : 00",
+      display: "00:00:00",
       isOn: false,
       start: 0,
       now: 0,
       diffrence: 0,
-      service: ''
+      service: ""
     };
 
-    this.stopTimer = this.stopTimer.bind(this);
+    // this.stopTimer = this.stopTimer.bind(this);
   }
 
   migrationStartTime = props => {
@@ -75,10 +119,10 @@ class Details extends React.Component {
       if (oneMigration.service == "migration" && oneMigration.migrated) {
         this.setState({
           migrated: oneMigration.chunkSize * oneMigration.chunkNumber,
-          dataElements: oneMigration.totalElements,
+          dataElements: oneMigration.totalElements
         });
       } else if (oneMigration.service == "email") {
-        this.stopTimer();
+        // this.stopTimer();
         Swal.fire({
           title: "Migration completed",
           html: `<p>Data Elements sent for migration: ${
@@ -104,14 +148,14 @@ class Details extends React.Component {
       } else if (oneMigration.service == "failqueue" && oneMigration.migrated) {
         this.setState({
           failed: (this.state.failed -= oneMigration.chunkSize),
-          migrated: this.state.migrated + oneMigration.chunkSize,
+          migrated: this.state.migrated + oneMigration.chunkSize
         });
       } else {
         this.setState({
           failed:
             !oneMigration.migrated && oneMigration.chunkSize
               ? this.state.failed + oneMigration.chunkSize
-              : this.state.failed,
+              : this.state.failed
         });
       }
     }
@@ -140,37 +184,47 @@ class Details extends React.Component {
     }, 0);
   }
 
-  stopTimer() {
-    this.setState({ isOn: false });
-    clearInterval(this.timer);
-  }
+  // stopTimer() {
+  //   this.setState({ isOn: false });
+  //   clearInterval(this.state.start);
+  // }
 
   render() {
     return (
-      <DetailsDiv>
-        <List>
-          <RightText data-cy="migtaionID">Migration #{this.props.router.query.UUID}</RightText>
-          <RightText>OpenLmis Data for April 2019 </RightText>
-          <RightText>araruadam@yahoo.co.uk </RightText>
-        </List>
-        <List2>
-          <TimerText>{this.state.display}</TimerText>
-        </List2>
-        <List3>
-          <LeftText>Migration Started 5 October 2019 </LeftText>
-          <LeftText>
-            {this.state.dataElements}-- Data Elements Sent to be migrated
-          </LeftText>
-          <LeftText>{this.state.migrated}-- Data Elements Migrated</LeftText>
-          <LeftText>{this.state.failed}-- Data Elements Failed</LeftText>
-        </List3>
-      </DetailsDiv>
+      <>
+        <DetailsDiv>
+          <List>
+            <RightNewDiv>
+              <RightText data-cy="migtaionID">
+                Migration #{this.props.router.query.UUID}
+              </RightText>
+              <RightText>{this.props.metaData} </RightText>
+              <RightText> </RightText>
+            </RightNewDiv>
+
+            <LeftNewDiv>
+              <LeftText>{this.state.dataElements} Data</LeftText>
+              <LeftText>{this.state.migrated} Data Elements Migrated</LeftText>
+              <LeftText>{this.state.failed} Data Elements Failed</LeftText>
+            </LeftNewDiv>
+          </List>
+          <List3 />
+        </DetailsDiv>
+        <TimerDiv>
+          <List2>
+            <TimerText>{this.state.display}</TimerText>
+          </List2>
+          <StopWatchText>Elapsed Since</StopWatchText>
+          <StopWatchText>Migration Started</StopWatchText>
+        </TimerDiv>
+      </>
     );
   }
 }
 
 const mapStateToProps = state => ({
   messages: state.migration.migration
+  // metaData: state.migration.metaData
 });
 
 export default withRouter(

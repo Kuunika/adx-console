@@ -1,11 +1,12 @@
 import styled from "styled-components";
 
 const ImageDiv = styled.div`
-  margin-top: 30px;
+  margin-top: 6px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  margin-bottom: 6px;
 `;
 
 const image = () => (
@@ -13,7 +14,7 @@ const image = () => (
     <img
       src="/static/ministryLogo.png"
       alt="ministry logo"
-      style={{ width: "6rem" }}
+      style={{ width: "3rem" }}
     />
   </ImageDiv>
 );

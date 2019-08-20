@@ -13,3 +13,10 @@ export const addHistory = data => {
     payload: data
   };
 };
+
+// export const getMetaData = data => {
+//   return {
+//     type: FETCH_META_DATA,
+//     payload: data
+//   };
+// };

@@ -2,14 +2,17 @@ import styled from "styled-components";
 import MigrationDetails from "./MigrationDetails";
 import { connect } from "react-redux";
 
+const BlueLine = styled.div`
+  background-color: #091b59;
+  height: 20px;
+`;
+
 const MigrationContainer = styled.div`
   background-color: #9498a2;
   height: 40px;
-  width: 1350px;
+  width: 1429px;
   margin-top: 0px;
-  margin: auto;
-  border-radius: 25px;
-  border: solid #091b58;
+  margin: 0px;
 `;
 
 const Bar = styled.div`
@@ -17,7 +20,7 @@ const Bar = styled.div`
   height: 40px;
   width: ${props => props.width};
   margin-top: 0px;
-  border-radius: 25px;
+  border-radius: 0px;
 `;
 
 const BarText = styled.p`
@@ -76,6 +79,7 @@ class MigrationBox extends React.Component {
           <Bar width={this.state.percent} />
           <BarText>{this.state.percent} Total Migration</BarText>
         </MigrationContainer>
+        <BlueLine/>
       </>
     );
   }
